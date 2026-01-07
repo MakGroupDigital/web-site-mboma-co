@@ -50,8 +50,8 @@ const Footer: React.FC = () => {
               <h4 className="text-institutional-lightGreen uppercase tracking-widest text-xs font-bold mb-6">Contact</h4>
               <ul className="space-y-4">
                 <li>
-                  <a href="mailto:contact@mboma.co" className="text-sm hover:text-institutional-orange text-white/60 transition-colors block">
-                    contact@mboma.co
+                  <a href="mailto:co@mboma.org" className="text-sm hover:text-institutional-orange text-white/60 transition-colors block">
+                    co@mboma.org
                   </a>
                 </li>
                 <li className="text-sm text-white/30 italic">Document confidentiel & propriétaire</li>

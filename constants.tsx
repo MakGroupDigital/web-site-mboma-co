@@ -164,6 +164,44 @@ export const THOUGHT_LEADERSHIP = [
   }
 ];
 
+export const AUDIT_CAMPAIGN = {
+  title: "Campagne d'Audits 2026",
+  subtitle: "Sécurisez votre transformation numérique",
+  description: "Profitez de notre campagne spéciale d'audits pour évaluer et renforcer votre conformité, sécurité et infrastructure cloud.",
+  audits: [
+    {
+      id: "rgpd",
+      title: "Audit de Conformité RGPD",
+      shortTitle: "Conformité RGPD",
+      description: "Évaluation complète de votre conformité au Règlement Général sur la Protection des Données",
+      duration: "3-5 jours",
+      deliverables: ["Rapport de conformité", "Plan d'action prioritaire", "Recommandations techniques"],
+      price: "À partir de $2,800",
+      highlights: ["Analyse des processus", "Cartographie des données", "Évaluation des risques"]
+    },
+    {
+      id: "security",
+      title: "Audit de Sécurité Numérique",
+      shortTitle: "Sécurité Numérique",
+      description: "Analyse approfondie de votre posture de sécurité informatique et cybersécurité",
+      duration: "5-7 jours",
+      deliverables: ["Rapport de vulnérabilités", "Tests de pénétration", "Plan de remédiation"],
+      price: "À partir de $3,900",
+      highlights: ["Tests d'intrusion", "Analyse des vulnérabilités", "Évaluation des accès"]
+    },
+    {
+      id: "cloud",
+      title: "Audit d'Infrastructure Cloud",
+      shortTitle: "Infrastructure Cloud",
+      description: "Optimisation et sécurisation de votre architecture cloud (AWS, Azure, GCP)",
+      duration: "4-6 jours",
+      deliverables: ["Architecture review", "Optimisation des coûts", "Recommandations sécurité"],
+      price: "À partir de $3,300",
+      highlights: ["Analyse des coûts", "Sécurité cloud", "Performance et scalabilité"]
+    }
+  ]
+};
+
 export const BRAND_SLOGAN = "Nous ne faisons pas du bruit. Nous laissons une trace.";
 
 export const VISION_STATEMENT = {
@@ -200,5 +238,34 @@ export const INTERVENTION_DOMAINS = [
     title: "Pilotage de Programmes",
     description: "Gestion rigoureuse de projets complexes à fort impact social et économique à l'échelle panafricaine.",
     services: ["Maîtrise d'œuvre", "Coordination de consortiums", "Suivi & Évaluation"]
+  }
+];
+
+export const ANNUAL_REPORTS = [
+  {
+    year: "2025",
+    title: "Rapport Annuel 2025",
+    titleEn: "Annual Report 2025",
+    subtitle: "Bâtir l'Afrique de Demain : Innovation, Gouvernance et Souveraineté",
+    subtitleEn: "Building Tomorrow's Africa: Innovation, Governance and Sovereignty",
+    description: "Notre rapport annuel 2025 présente nos réalisations majeures, nos projets structurants et notre vision pour l'émergence d'une Afrique technologiquement souveraine.",
+    descriptionEn: "Our 2025 annual report presents our major achievements, structural projects and our vision for the emergence of a technologically sovereign Africa.",
+    pages: 84,
+    language: "Français",
+    languageEn: "English",
+    filePathFr: "/rapport-annuel-2025-fr.pdf",
+    filePathEn: "/annual-report-2025-en.pdf",
+    highlights: [
+      "26 projets structurants déployés",
+      "12 pays partenaires mobilisés", 
+      "150+ solutions technologiques développées",
+      "85% d'expertise locale mobilisée"
+    ],
+    highlightsEn: [
+      "26 structural projects deployed",
+      "12 partner countries mobilized",
+      "150+ technological solutions developed", 
+      "85% local expertise mobilized"
+    ]
   }
 ];

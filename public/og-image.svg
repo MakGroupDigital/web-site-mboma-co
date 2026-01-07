@@ -1,0 +1,22 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#FFFFFF"/>
+  
+  <!-- Logo Circle -->
+  <circle cx="300" cy="315" r="120" fill="#6E8F3A" stroke="#3A3A3A" stroke-width="4"/>
+  
+  <!-- Paw pads -->
+  <ellipse cx="260" cy="275" rx="20" ry="25" fill="#FFFFFF" />
+  <ellipse cx="290" cy="255" rx="20" ry="25" fill="#FFFFFF" />
+  <ellipse cx="320" cy="255" rx="20" ry="25" fill="#FFFFFF" />
+  <ellipse cx="350" cy="275" rx="20" ry="25" fill="#FFFFFF" />
+  
+  <!-- Main pad -->
+  <path d="M240 365C240 345 270 335 300 335C330 335 360 345 360 365C360 385 330 400 300 400C270 400 240 385 240 365Z" fill="#FFFFFF" />
+  
+  <!-- Text -->
+  <text x="480" y="280" font-family="Inter, sans-serif" font-size="72" font-weight="300" fill="#3A3A3A">MboMa & Co.</text>
+  <text x="480" y="340" font-family="Libre Baskerville, serif" font-size="32" font-style="italic" fill="#6E8F3A">Institution Panafricaine</text>
+  <text x="480" y="380" font-family="Libre Baskerville, serif" font-size="28" fill="#C8742A">« Nous ne faisons pas du bruit.</text>
+  <text x="480" y="415" font-family="Libre Baskerville, serif" font-size="28" fill="#C8742A">Nous laissons une trace. »</text>
+</svg>
