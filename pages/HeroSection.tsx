@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { VALUES, EXPERTISES, IMPACT_METRICS, SECTORS, STRATEGIC_PARTNERSHIPS, FLAGSHIP_PROJECTS, GOVERNANCE_PRINCIPLES, INNOVATION_LABS, CONTINENTAL_PRESENCE, THOUGHT_LEADERSHIP, BRAND_SLOGAN, VISION_STATEMENT, CORE_VALUES_BRIEF, INTERVENTION_DOMAINS, ANNUAL_REPORTS, AUDIT_CAMPAIGN } from '../constants';
+import DataProcessingTerminal from '../components/DataProcessingTerminal';
+import ExpertiseCards from '../components/ExpertiseCards';
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -232,6 +234,116 @@ const HeroSection: React.FC = () => {
             </motion.div>
             <div className="h-px w-32 bg-institutional-green mt-8"></div>
           </div>
+        </div>
+      </section>
+
+      {/* Section: Data Processing & Tokenization */}
+      <section className="py-24 lg:py-40 bg-institutional-grey text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="grid grid-cols-12 h-full w-full">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="border-r border-white h-full" />
+            ))}
+          </div>
+        </div>
+        
+        <div className="container mx-auto px-6 lg:px-12 relative z-10">
+          <div className="text-center mb-20">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 bg-institutional-orange/20 px-4 py-2 rounded-full mb-6"
+            >
+              <span className="w-2 h-2 bg-institutional-orange rounded-full animate-pulse"></span>
+              <span className="text-xs uppercase tracking-widest font-bold">Technologie Avancée</span>
+            </motion.div>
+            
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-sans text-3xl lg:text-5xl font-bold mb-6"
+            >
+              Traitement & Tokenisation des Données
+            </motion.h2>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="font-serif text-lg max-w-3xl mx-auto opacity-90"
+            >
+              Découvrez comment nous transformons les données brutes en actifs numériques sécurisés et valorisés
+            </motion.p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="max-w-4xl mx-auto"
+          >
+            <DataProcessingTerminal />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            <div className="text-center">
+              <div className="text-4xl font-bold text-institutional-lightGreen mb-2">2.4M+</div>
+              <p className="text-sm text-white/60">Tokens générés par cycle</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-institutional-orange mb-2">340%</div>
+              <p className="text-sm text-white/60">ROI potentiel moyen</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-institutional-lightGreen mb-2">12</div>
+              <p className="text-sm text-white/60">Nœuds de sécurisation</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Section: Interactive Expertise Cards */}
+      <section className="py-24 lg:py-40 bg-white">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="text-center mb-20">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-xs uppercase tracking-[0.3em] font-bold text-institutional-green mb-6"
+            >
+              Nos Expertises
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-sans text-3xl lg:text-4xl text-institutional-grey leading-tight max-w-4xl mx-auto"
+            >
+              Cliquez sur chaque carte pour découvrir nos <span className="text-institutional-green italic">capacités détaillées</span>
+            </motion.p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <ExpertiseCards expertises={EXPERTISES} />
+          </motion.div>
         </div>
       </section>
 

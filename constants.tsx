@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const COLORS = {
@@ -27,9 +26,12 @@ export const VALUES = [
 
 export const EXPERTISES = [
   { title: "Transformation Numérique", desc: "Digitalisation des processus étatiques et institutionnels." },
-  { title: "Structuration d’Écosystèmes", desc: "Création de hubs d'innovation et de clusters industriels." },
+  { title: "Structuration d'Écosystèmes", desc: "Création de hubs d'innovation et de clusters industriels." },
   { title: "Gouvernance de Programmes", desc: "Pilotage de projets complexes à l'échelle nationale ou régionale." },
-  { title: "Ingénierie de Développement", desc: "Accompagnement des politiques publiques et initiatives privées." }
+  { title: "Ingénierie de Développement", desc: "Accompagnement des politiques publiques et initiatives privées." },
+  { title: "Traitement des Données", desc: "Collecte, nettoyage et analyse avancée de données massives." },
+  { title: "Valorisation de Données", desc: "Extraction de valeur économique et stratégique des données brutes." },
+  { title: "Tokenisation & Blockchain", desc: "Numérisation d'actifs et création d'écosystèmes décentralisés." }
 ];
 
 export const IMPACT_METRICS = [
