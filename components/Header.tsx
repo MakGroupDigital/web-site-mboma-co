@@ -1,15 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
-import { NAVIGATION } from '../constants';
 
-interface HeaderProps {
-  onNavigate: (view: string) => void;
-  currentView: string;
-}
-
-const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
+const Header: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -21,7 +18,6 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when clicking outside or on navigation
   useEffect(() => {
     const handleClickOutside = () => {
       setMobileMenuOpen(false);
@@ -33,15 +29,15 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
   }, [mobileMenuOpen]);
 
   const navItems = [
-    { label: 'Institution', id: 'institution' },
-    { label: 'Vision & Valeurs', id: 'vision' },
-    { label: 'Expertises', id: 'expertises' },
-    { label: 'Architecture', id: 'architecture' },
-    { label: 'Rapports', id: 'rapports' },
+    { label: 'Institution', path: '/institution' },
+    { label: 'Vision & Valeurs', path: '/vision' },
+    { label: 'Expertises', path: '/expertises' },
+    { label: 'Architecture', path: '/architecture' },
+    { label: 'Rapports', path: '/rapports' },
   ];
 
-  const handleMobileNavigation = (viewId: string) => {
-    onNavigate(viewId);
+  const handleNavigation = (path: string) => {
+    navigate(path);
     setMobileMenuOpen(false);
   };
 
@@ -49,12 +45,12 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
     <>
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled || currentView !== 'hero' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-8'
+          scrolled || location.pathname !== '/' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-8'
         }`}
       >
         <div className="container mx-auto px-6 lg:px-12 flex justify-between items-center">
           <button 
-            onClick={() => onNavigate('hero')}
+            onClick={() => navigate('/')}
             className="hover:opacity-90 transition-opacity"
           >
             <Logo variant="color" size="sm" />
@@ -63,17 +59,17 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
           <nav className="hidden lg:flex items-center gap-10">
             {navItems.map((item) => (
               <button
-                key={item.id}
-                onClick={() => onNavigate(item.id)}
+                key={item.path}
+                onClick={() => handleNavigation(item.path)}
                 className={`relative font-sans text-xs uppercase tracking-[0.15em] font-bold transition-colors group py-2 ${
-                  currentView === item.id ? 'text-institutional-green' : 'text-institutional-grey hover:text-institutional-green'
+                  location.pathname === item.path ? 'text-institutional-green' : 'text-institutional-grey hover:text-institutional-green'
                 }`}
               >
                 {item.label}
                 <motion.div 
                   className="absolute bottom-0 left-0 h-[2px] bg-institutional-green"
                   initial={{ width: 0 }}
-                  animate={{ width: currentView === item.id ? '100%' : 0 }}
+                  animate={{ width: location.pathname === item.path ? '100%' : 0 }}
                   whileHover={{ width: '100%' }}
                   transition={{ duration: 0.3 }}
                 />
@@ -81,7 +77,6 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
             ))}
           </nav>
 
-          {/* Action Button - Subtle */}
           <div className="flex items-center gap-6">
             <a 
               href="mailto:co@mboma.org" 
@@ -91,13 +86,12 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
             </a>
             
             <button
-              onClick={() => onNavigate('audit-booking')}
+              onClick={() => handleNavigation('/audit-booking')}
               className="hidden lg:block bg-institutional-orange text-white px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-institutional-orange/90 transition-all transform hover:scale-105 active:scale-95"
             >
               Audit Gratuit
             </button>
             
-            {/* Mobile menu trigger */}
             <button 
               onClick={(e) => {
                 e.stopPropagation();
@@ -124,7 +118,6 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -138,7 +131,6 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -153,13 +145,13 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
               <nav className="space-y-6">
                 {navItems.map((item, i) => (
                   <motion.button
-                    key={item.id}
+                    key={item.path}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    onClick={() => handleMobileNavigation(item.id)}
+                    onClick={() => handleNavigation(item.path)}
                     className={`block w-full text-left font-sans text-lg font-bold transition-colors py-3 border-b border-gray-100 ${
-                      currentView === item.id ? 'text-institutional-green' : 'text-institutional-grey hover:text-institutional-green'
+                      location.pathname === item.path ? 'text-institutional-green' : 'text-institutional-grey hover:text-institutional-green'
                     }`}
                   >
                     {item.label}
@@ -181,7 +173,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
                 </a>
                 
                 <button
-                  onClick={() => handleMobileNavigation('audit-booking')}
+                  onClick={() => handleNavigation('/audit-booking')}
                   className="block w-full text-center bg-institutional-orange text-white px-6 py-3 text-sm uppercase tracking-widest font-bold hover:bg-institutional-orange/90 transition-all"
                 >
                   Audit Gratuit
