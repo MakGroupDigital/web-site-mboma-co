@@ -10,6 +10,7 @@ import ArchitecturePage from './pages/ArchitecturePage';
 import RapportsPage from './pages/RapportsPage';
 import AuditBookingPage from './pages/AuditBookingPage';
 import MasterclassPage from './pages/MasterclassPage';
+import VerificationPage from './pages/VerificationPage';
 
 export const routes: RouteObject[] = [
   {
@@ -43,5 +44,9 @@ export const routes: RouteObject[] = [
   {
     path: '/masterclass',
     element: <MasterclassPage />,
+  },
+  {
+    path: '/verify/:type/:id',
+    element: <VerificationPage />,
   },
 ];

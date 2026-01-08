@@ -15,76 +15,147 @@
    - **Outlook**
    - **Custom SMTP**
 
-### 3. Créer le template d'email
+### 3. Créer les templates d'email
+
+#### Template 1: Demande d'Audit (existant)
+- **Template ID**: `template_n55j7vt`
+- Utilisé pour les demandes d'audit
+
+#### Template 2: Confirmation Admin Masterclass (À créer)
 1. Allez dans **"Email Templates"**
 2. Cliquez **"Create New Template"**
-3. Copiez ce template en français :
+3. Nommez-le: `Masterclass Admin Confirmation`
+4. Copiez ce contenu:
 
 ```
-Objet: Confirmation de votre demande - {{title}}
-
-Bonjour {{name}},
-
-Merci de nous avoir contactés ! Nous avons bien reçu votre demande : "{{title}}", et nous ferons de notre mieux pour la traiter dans un délai de 3 jours ouvrables.
-
-Cordialement,
-L'équipe MboMa & Co.
-```
-
-**Template alternatif (notification interne) :**
-```
-Objet: Nouvelle demande d'audit - {{company}}
+Objet: Nouvelle inscription à la masterclass - {{name}}
 
 Bonjour,
 
-Vous avez reçu une nouvelle demande d'audit depuis mboma.org :
+Vous avez reçu une nouvelle inscription à la masterclass "Dormez & Gagnez" :
 
-INFORMATIONS CLIENT :
-- Nom : {{first_name}} {{last_name}}
-- Email : {{email}}
-- Entreprise : {{company}}
-- Type d'audit : {{audit_type}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INFORMATIONS PARTICIPANT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-MESSAGE :
-{{message}}
+Nom Complet: {{name}}
+Email: {{email}}
+Téléphone: {{phone}}
+Entreprise/Projet: {{company}}
+Pays: {{country}}
+Ville: {{city}}
 
-DÉTAILS :
-- Date : {{date}}
-- Navigateur : {{user_agent}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DÉTAILS INSCRIPTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
----
-Envoyé automatiquement depuis mboma.org
+Numéro de Référence: {{reference_number}}
+Date d'Inscription: {{registration_date}}
+Statut de Paiement: {{payment_status}}
+ID Transaction: {{transaction_id}}
+Date de Paiement: {{payment_date}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cordialement,
+Système d'Inscription MboMa & Co.
 ```
+
+**Template ID à récupérer après création**: `template_masterclass_admin`
+
+#### Template 3: Confirmation Utilisateur Masterclass (À créer)
+1. Allez dans **"Email Templates"**
+2. Cliquez **"Create New Template"**
+3. Nommez-le: `Masterclass User Confirmation`
+4. Copiez ce contenu:
+
+```
+Objet: Bienvenue à la Masterclass MboMa & Co! 🎉
+
+Bonjour {{name}},
+
+Merci de vous être inscrit à notre masterclass exclusive "Dormez & Gagnez" !
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONFIRMATION D'INSCRIPTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Votre inscription a été confirmée avec succès!
+
+Numéro de Référence: {{reference_number}}
+Date d'Inscription: {{registration_date}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DÉTAILS DE LA MASTERCLASS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Titre: Dormez & Gagnez - L'art de l'automatisation totale
+Dates: 19-21 Février 2026
+Horaires: 17h00-19h30
+Format: En ligne & Présentiel (Kinshasa)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STATUT DE PAIEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Statut: {{payment_status}}
+{{#if_eq payment_status "Paiement Effectué"}}
+ID Transaction: {{transaction_id}}
+Date de Paiement: {{payment_date}}
+Votre reçu de paiement est en pièce jointe.
+{{/if_eq}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROCHAINES ÉTAPES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Téléchargez votre fiche d'inscription (en pièce jointe)
+2. Conservez votre numéro de référence
+3. Rejoignez notre communauté WhatsApp exclusive
+4. Préparez-vous pour le 19 février à 17h00
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Pour toute question: co@mboma.org
+
+Bienvenue à la masterclass!
+
+L'équipe MboMa & Co.
+```
+
+**Template ID à récupérer après création**: `template_masterclass_user`
 
 ### 4. Vos clés EmailJS (configurées)
 - **Public Key** : `ysWtYnFgf6oXyDQdz` ✅
 - **Private Key** : `N8TXcF7LXxYiMVPcCPenM` (à garder secrète, côté serveur uniquement)
-- **Service ID** : À récupérer dans votre dashboard EmailJS
-- **Template ID** : À récupérer après création du template
+- **Service ID** : `service_zsemrdi` ✅
+- **Template ID Audit** : `template_n55j7vt` ✅
+- **Template ID Admin Masterclass** : À récupérer après création
+- **Template ID User Masterclass** : À récupérer après création
 
 ### 5. Configurer les variables d'environnement
 Le fichier `.env.local` est déjà configuré avec votre Public Key :
 
 ```bash
-VITE_EMAILJS_SERVICE_ID=service_xxxxxxx    # À remplacer
-VITE_EMAILJS_TEMPLATE_ID=template_xxxxxxx  # À remplacer
-VITE_EMAILJS_PUBLIC_KEY=ysWtYnFgf6oXyDQdz  # ✅ Configuré
+VITE_EMAILJS_SERVICE_ID=service_zsemrdi
+VITE_EMAILJS_PUBLIC_KEY=ysWtYnFgf6oXyDQdz
 ```
 
 ### 6. Tester le formulaire
 1. Allez sur votre site
-2. Naviguez vers "Audit Gratuit"
-3. Remplissez le formulaire
-4. Vérifiez que vous recevez l'email sur `co@mboma.org`
+2. Naviguez vers "Masterclass"
+3. Remplissez le formulaire d'inscription
+4. Vérifiez que vous recevez l'email sur `co@mboma.org` ET sur votre email personnel
 
 ## 🔧 Fonctionnalités incluses
 
 - ✅ **Formulaire complet** avec validation
+- ✅ **Sélection pays/ville** dynamique
 - ✅ **Messages de statut** (succès/erreur)
-- ✅ **Sélection d'audit** depuis les cartes
 - ✅ **Design responsive**
 - ✅ **Anti-spam** (via EmailJS)
 - ✅ **Données formatées** dans l'email
+- ✅ **PDFs en pièces jointes** (fiche + reçu)
 
 ## 📊 Limites du plan gratuit
 - **200 emails/mois** gratuits
@@ -93,7 +164,7 @@ VITE_EMAILJS_PUBLIC_KEY=ysWtYnFgf6oXyDQdz  # ✅ Configuré
 ## 🛠️ Personnalisation
 Vous pouvez modifier :
 - Le template d'email dans EmailJS
-- Les champs du formulaire dans `App.tsx`
+- Les champs du formulaire dans `pages/MasterclassPage.tsx`
 - Le design dans les classes CSS
 
 ## 🔒 Sécurité
