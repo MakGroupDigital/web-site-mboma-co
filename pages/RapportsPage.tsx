@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ANNUAL_REPORTS } from '../constants';
+import { openPdfWithFallback, downloadPdf } from '../services/pdfService';
 
 const RapportsPage: React.FC = () => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -75,7 +76,7 @@ const RapportsPage: React.FC = () => (
                       <p className="text-white/70 text-sm mb-6 font-serif">{report.title}</p>
                       <div className="flex flex-col sm:flex-row gap-3">
                         <button 
-                          onClick={() => window.open(report.filePathFr, '_blank')}
+                          onClick={() => openPdfWithFallback(report.filePathFr, `mboma-rapport-${report.year}-fr.pdf`)}
                           className="flex-1 bg-institutional-green text-white px-6 py-3 text-sm uppercase tracking-widest font-bold hover:bg-institutional-green/90 transition-all flex items-center justify-center gap-2"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,12 +86,7 @@ const RapportsPage: React.FC = () => (
                           Lire
                         </button>
                         <button 
-                          onClick={() => {
-                            const link = document.createElement('a');
-                            link.href = report.filePathFr;
-                            link.download = `mboma-rapport-${report.year}-fr.pdf`;
-                            link.click();
-                          }}
+                          onClick={() => downloadPdf(report.filePathFr, `mboma-rapport-${report.year}-fr.pdf`)}
                           className="flex-1 border border-white/30 text-white px-6 py-3 text-sm uppercase tracking-widest font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,7 +105,7 @@ const RapportsPage: React.FC = () => (
                       <p className="text-white/70 text-sm mb-6 font-serif">{report.titleEn}</p>
                       <div className="flex flex-col sm:flex-row gap-3">
                         <button 
-                          onClick={() => window.open(report.filePathEn, '_blank')}
+                          onClick={() => openPdfWithFallback(report.filePathEn, `mboma-report-${report.year}-en.pdf`)}
                           className="flex-1 bg-institutional-green text-white px-6 py-3 text-sm uppercase tracking-widest font-bold hover:bg-institutional-green/90 transition-all flex items-center justify-center gap-2"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,12 +115,7 @@ const RapportsPage: React.FC = () => (
                           Read
                         </button>
                         <button 
-                          onClick={() => {
-                            const link = document.createElement('a');
-                            link.href = report.filePathEn;
-                            link.download = `mboma-report-${report.year}-en.pdf`;
-                            link.click();
-                          }}
+                          onClick={() => downloadPdf(report.filePathEn, `mboma-report-${report.year}-en.pdf`)}
                           className="flex-1 border border-white/30 text-white px-6 py-3 text-sm uppercase tracking-widest font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
