@@ -9,6 +9,7 @@ import ExpertisesPage from './pages/ExpertisesPage';
 import ArchitecturePage from './pages/ArchitecturePage';
 import RapportsPage from './pages/RapportsPage';
 import AuditBookingPage from './pages/AuditBookingPage';
+import MasterclassPage from './pages/MasterclassPage';
 
 export const routes: RouteObject[] = [
   {
@@ -38,5 +39,9 @@ export const routes: RouteObject[] = [
   {
     path: '/audit-booking',
     element: <AuditBookingPage />,
+  },
+  {
+    path: '/masterclass',
+    element: <MasterclassPage />,
   },
 ];

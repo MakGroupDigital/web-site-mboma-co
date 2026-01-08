@@ -91,6 +91,13 @@ const Header: React.FC = () => {
             >
               Audit Gratuit
             </button>
+
+            <button
+              onClick={() => handleNavigation('/masterclass')}
+              className="hidden lg:block bg-institutional-green text-white px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-institutional-green/90 transition-all transform hover:scale-105 active:scale-95"
+            >
+              Masterclass
+            </button>
             
             <button 
               onClick={(e) => {
@@ -177,6 +184,13 @@ const Header: React.FC = () => {
                   className="block w-full text-center bg-institutional-orange text-white px-6 py-3 text-sm uppercase tracking-widest font-bold hover:bg-institutional-orange/90 transition-all"
                 >
                   Audit Gratuit
+                </button>
+
+                <button
+                  onClick={() => handleNavigation('/masterclass')}
+                  className="block w-full text-center bg-institutional-green text-white px-6 py-3 text-sm uppercase tracking-widest font-bold hover:bg-institutional-green/90 transition-all"
+                >
+                  Masterclass
                 </button>
               </motion.div>
             </div>
