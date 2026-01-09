@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { generateRegistrationPDF, generatePaymentReceiptPDF, RegistrationData, PaymentData } from '../services/pdfGenerator';
-import { sendAdminConfirmationEmail, sendUserConfirmationEmail, MasterclassRegistrationEmail } from '../services/masterclassEmailService';
+import { saveMasterclassRegistration, uploadPdfToStorage, updateRegistrationWithPdfs, sendConfirmationEmail } from '../services/masterclassService';
 import { countries, countriesCities } from '../data/countriesCities';
 
 const MasterclassPage: React.FC = () => {
@@ -106,42 +106,55 @@ const MasterclassPage: React.FC = () => {
     }
   };
 
-  const sendConfirmationEmails = async (paymentStatus: 'pending' | 'completed' | 'office') => {
+  const sendConfirmationMessages = async (paymentStatus: 'pending' | 'completed' | 'office') => {
     try {
-      const emailData: MasterclassRegistrationEmail = {
+      // 1. Save registration to Firestore
+      const registrationId = await saveMasterclassRegistration({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        company: formData.company,
         phone: formData.phone,
+        company: formData.company,
         country: formData.country,
         city: formData.city,
         referenceNumber,
         registrationDate: new Date().toLocaleDateString('fr-FR'),
-        paymentStatus,
+        paymentStatus: paymentStatus as 'pending' | 'completed' | 'office',
         transactionId: paymentStatus === 'completed' ? transactionId : undefined,
         paymentDate: paymentStatus === 'completed' ? new Date().toLocaleDateString('fr-FR') : undefined
-      };
+      });
 
-      // Send emails to both admin and user
-      await Promise.all([
-        sendAdminConfirmationEmail(emailData),
-        sendUserConfirmationEmail(emailData)
-      ]);
+      console.log('✅ Registration saved to Firestore:', registrationId);
 
-      console.log('Confirmation emails sent successfully');
+      // 2. Send confirmation email via Cloud Function
+      await sendConfirmationEmail(registrationId, {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        country: formData.country,
+        city: formData.city,
+        referenceNumber,
+        registrationDate: new Date().toLocaleDateString('fr-FR'),
+        paymentStatus: paymentStatus as 'pending' | 'completed' | 'office',
+        transactionId: paymentStatus === 'completed' ? transactionId : undefined,
+        paymentDate: paymentStatus === 'completed' ? new Date().toLocaleDateString('fr-FR') : undefined
+      });
+
+      console.log('✅ Confirmation email sent successfully');
     } catch (error) {
-      console.error('Error sending confirmation emails:', error);
+      console.error('❌ Error sending confirmation:', error);
       // Don't throw - let the user continue even if email fails
     }
   };
 
-  // Send confirmation emails when reaching final step
+  // Send confirmation messages when reaching final step
   React.useEffect(() => {
     if (currentStep === 5) {
       // Determine payment status based on transaction ID
       const paymentStatus = transactionId ? 'completed' : 'pending';
-      sendConfirmationEmails(paymentStatus);
+      sendConfirmationMessages(paymentStatus);
     }
   }, [currentStep]);
 

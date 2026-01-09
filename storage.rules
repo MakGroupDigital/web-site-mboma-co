@@ -1,0 +1,14 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow anyone to upload and read masterclass PDFs
+    match /masterclass/{referenceNumber}/{allPaths=**} {
+      allow read, write: if true;
+    }
+    
+    // Allow anyone to upload and read audit PDFs
+    match /audit/{referenceNumber}/{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}
