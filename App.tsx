@@ -1,10 +1,60 @@
 import React, { useEffect } from 'react';
 import { useRoutes, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import SEOHead from './components/SEOHead';
 import { routes } from './routes';
+
+// SEO Data for each page
+const seoData: Record<string, { title: string; description: string; keywords?: string }> = {
+  '/': {
+    title: 'Institution Panafricaine de Pilotage et Gouvernance',
+    description: 'MboMa & Co. est une structure de pilotage et de gouvernance de projets complexes opérant à l\'interface des nations et du futur. Nous ne faisons pas du bruit. Nous laissons une trace.',
+    keywords: 'MboMa, Afrique, gouvernance, innovation, développement, souveraineté, technologie, panafricain, consulting'
+  },
+  '/institution': {
+    title: 'Institution',
+    description: 'Découvrez MboMa & Co., une institution panafricaine dédiée au pilotage stratégique et à la gouvernance de projets complexes en Afrique.',
+    keywords: 'institution panafricaine, gouvernance, Afrique, pilotage stratégique, MboMa'
+  },
+  '/vision': {
+    title: 'Vision & Valeurs',
+    description: 'Notre vision : bâtir une Afrique souveraine par l\'innovation et la gouvernance. Découvrez les valeurs qui guident MboMa & Co.',
+    keywords: 'vision, valeurs, Afrique souveraine, innovation africaine, MboMa'
+  },
+  '/expertises': {
+    title: 'Expertises',
+    description: 'Nos domaines d\'expertise : transformation digitale, gouvernance institutionnelle, innovation technologique et développement durable en Afrique.',
+    keywords: 'expertise, transformation digitale, gouvernance, innovation, technologie, Afrique, MboMa'
+  },
+  '/architecture': {
+    title: 'Architecture',
+    description: 'L\'architecture organisationnelle de MboMa & Co. : une structure agile et innovante au service de l\'excellence africaine.',
+    keywords: 'architecture, organisation, structure, MboMa, Afrique'
+  },
+  '/rapports': {
+    title: 'Rapports Annuels',
+    description: 'Consultez nos rapports annuels et découvrez l\'impact de MboMa & Co. sur le développement et l\'innovation en Afrique.',
+    keywords: 'rapports annuels, impact, développement, Afrique, MboMa, résultats'
+  },
+  '/audit-booking': {
+    title: 'Réservation d\'Audit Gratuit',
+    description: 'Réservez votre audit gratuit avec MboMa & Co. Audit de conformité RGPD, sécurité numérique et infrastructure cloud pour votre entreprise.',
+    keywords: 'audit gratuit, RGPD, sécurité numérique, cloud, conformité, MboMa'
+  },
+  '/masterclass': {
+    title: 'Masterclass Dormez & Gagnez',
+    description: 'Inscrivez-vous à notre masterclass exclusive "Dormez & Gagnez" - L\'art de l\'automatisation totale. 19-21 Février 2026 à Kinshasa.',
+    keywords: 'masterclass, formation, automatisation, revenus passifs, Kinshasa, MboMa, Dormez et Gagnez'
+  },
+  '/verification': {
+    title: 'Vérification d\'Inscription',
+    description: 'Vérifiez votre inscription à la masterclass MboMa & Co. avec votre numéro de référence.',
+    keywords: 'vérification, inscription, masterclass, MboMa'
+  }
+};
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -17,33 +67,53 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Dynamic page titles
-const useDynamicTitle = () => {
+// Dynamic SEO component
+const DynamicSEO = () => {
   const location = useLocation();
+  const currentSEO = seoData[location.pathname] || seoData['/'];
+  const fullTitle = location.pathname === '/' 
+    ? `MboMa & Co. | ${currentSEO.title}` 
+    : `${currentSEO.title} | MboMa & Co.`;
+  const currentUrl = `https://www.mboma.org${location.pathname}`;
 
-  useEffect(() => {
-    const titles: Record<string, string> = {
-      '/': 'MboMa & Co. | Institution Panafricaine',
-      '/institution': 'Institution | MboMa & Co.',
-      '/vision': 'Vision & Valeurs | MboMa & Co.',
-      '/expertises': 'Expertises | MboMa & Co.',
-      '/architecture': 'Architecture | MboMa & Co.',
-      '/rapports': 'Rapports Annuels | MboMa & Co.',
-      '/audit-booking': 'Réservation d\'Audit | MboMa & Co.',
-    };
-
-    document.title = titles[location.pathname] || titles['/'];
-  }, [location.pathname]);
+  return (
+    <Helmet>
+      <title>{fullTitle}</title>
+      <meta name="title" content={fullTitle} />
+      <meta name="description" content={currentSEO.description} />
+      <meta name="keywords" content={currentSEO.keywords} />
+      
+      {/* Open Graph */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={currentUrl} />
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={currentSEO.description} />
+      <meta property="og:image" content="https://www.mboma.org/og-image.png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:site_name" content="MboMa & Co." />
+      <meta property="og:locale" content="fr_FR" />
+      
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:url" content={currentUrl} />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={currentSEO.description} />
+      <meta name="twitter:image" content="https://www.mboma.org/og-image.png" />
+      
+      {/* Canonical */}
+      <link rel="canonical" href={currentUrl} />
+    </Helmet>
+  );
 };
 
 const App: React.FC = () => {
   const location = useLocation();
   const element = useRoutes(routes);
 
-  useDynamicTitle();
-
   return (
     <div className="min-h-screen selection:bg-institutional-green selection:text-white bg-white">
+      <DynamicSEO />
       <SEOHead />
       <ScrollToTop />
       <Header />

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .accent-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #6E8F3A 0%, #C8742A 100%);
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #6E8F3A 0%, #C8742A 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+    }
+    .logo-text {
+      font-size: 56px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -2px;
+    }
+    .tagline {
+      font-size: 28px;
+      color: #C8742A;
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      margin-bottom: 30px;
+    }
+    .description {
+      font-size: 24px;
+      color: rgba(255,255,255,0.7);
+      max-width: 800px;
+      text-align: center;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .bottom-accent {
+      position: absolute;
+      bottom: 40px;
+      display: flex;
+      gap: 40px;
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="accent-line"></div>
+  <div class="logo-container">
+    <div class="logo-icon">M</div>
+    <div class="logo-text">MboMa & Co.</div>
+  </div>
+  <div class="tagline">Institution Panafricaine</div>
+  <div class="description">
+    « Nous ne faisons pas du bruit. Nous laissons une trace. »
+  </div>
+  <div class="bottom-accent">
+    <span>Brazzaville</span>
+    <span>•</span>
+    <span>Kinshasa</span>
+    <span>•</span>
+    <span>Paris</span>
+  </div>
+</body>
+</html>
+
