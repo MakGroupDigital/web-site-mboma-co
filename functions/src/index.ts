@@ -1,6 +1,10 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as nodemailer from 'nodemailer';
+import * as dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 admin.initializeApp();
 
@@ -8,8 +12,8 @@ admin.initializeApp();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASSWORD
+    user: process.env.GMAIL_USER || 'co@mboma.org',
+    pass: process.env.GMAIL_PASSWORD || ''
   }
 });
 
