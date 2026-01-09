@@ -63,7 +63,7 @@ const AuditBookingPage: React.FC = () => {
 
       console.log('✅ Audit request saved to Firestore:', auditId);
 
-      // 2. Send confirmation email via Cloud Function
+      // 2. Send confirmation email via Cloud Function (Resend)
       await sendAuditConfirmationEmail({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -77,7 +77,7 @@ const AuditBookingPage: React.FC = () => {
         status: 'new'
       });
 
-      console.log('✅ Confirmation email sent successfully');
+      console.log('✅ Confirmation email sent via Resend');
 
       setSubmitStatus('success');
       setFormData({
@@ -291,9 +291,23 @@ const AuditBookingPage: React.FC = () => {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-institutional-green text-white py-4 px-6 font-sans text-sm font-bold uppercase tracking-widest hover:bg-institutional-green/90 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`w-full bg-institutional-green text-white py-4 px-6 font-sans text-sm font-bold uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3 ${
+                    isSubmitting 
+                      ? 'opacity-70 cursor-not-allowed' 
+                      : 'hover:bg-institutional-green/90 hover:shadow-xl'
+                  }`}
                 >
-                  {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Envoi en cours...</span>
+                    </>
+                  ) : (
+                    'Envoyer ma demande'
+                  )}
                 </button>
                 
                 <p className="text-xs text-white/50 text-center">

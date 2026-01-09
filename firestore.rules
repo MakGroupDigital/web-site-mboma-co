@@ -3,12 +3,12 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Allow anyone to read/write masterclass registrations (public form)
     match /masterclass_registrations/{document=**} {
-      allow read, write: if true;
+      allow read, write;
     }
     
     // Allow anyone to read/write audit requests (public form)
     match /audit_requests/{document=**} {
-      allow read, write: if true;
+      allow read, write;
     }
   }
 }
