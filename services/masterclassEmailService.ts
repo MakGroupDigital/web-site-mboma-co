@@ -1,4 +1,4 @@
-import emailjs from '@emailjs/browser';
+reveimport emailjs from '@emailjs/browser';
 
 // Initialize EmailJS
 const EMAILJS_SERVICE_ID = 'service_zsemrdi';

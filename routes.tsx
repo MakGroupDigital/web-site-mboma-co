@@ -11,6 +11,7 @@ import RapportsPage from './pages/RapportsPage';
 import AuditBookingPage from './pages/AuditBookingPage';
 import MasterclassPage from './pages/MasterclassPage';
 import VerificationPage from './pages/VerificationPage';
+import MoniOfferPage from './pages/MoniOfferPage';
 
 export const routes: RouteObject[] = [
   {
@@ -48,5 +49,9 @@ export const routes: RouteObject[] = [
   {
     path: '/verify/:type/:id',
     element: <VerificationPage />,
+  },
+  {
+    path: '/moni_offer',
+    element: <MoniOfferPage />,
   },
 ];

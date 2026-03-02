@@ -49,6 +49,11 @@ const seoData: Record<string, { title: string; description: string; keywords?: s
     description: 'Inscrivez-vous à notre masterclass exclusive "Dormez & Gagnez" - L\'art de l\'automatisation totale. 19-21 Février 2026 à Kinshasa.',
     keywords: 'masterclass, formation, automatisation, revenus passifs, Kinshasa, MboMa, Dormez et Gagnez'
   },
+  '/moni_offer': {
+    title: 'Offre Moni.IO',
+    description: 'Découvrez l’offre Moni.IO : vidéo de démonstration officielle et fonctionnalités clés de l’application fintech.',
+    keywords: 'moni.io, moni offer, fintech, application mobile, démonstration, fonctionnalités'
+  },
   '/verification': {
     title: 'Vérification d\'Inscription',
     description: 'Vérifiez votre inscription à la masterclass MboMa & Co. avec votre numéro de référence.',
