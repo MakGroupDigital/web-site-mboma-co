@@ -1,7 +1,7 @@
 import React from 'react';
 
 const SEOHead: React.FC = () => {
-  const structuredData = {
+  const organizationStructuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "MboMa & Co.",
@@ -53,11 +53,33 @@ const SEOHead: React.FC = () => {
     ]
   };
 
+  const websiteStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "MboMa & Co.",
+    "url": "https://mboma.org",
+    "inLanguage": "fr",
+    "publisher": {
+      "@type": "Organization",
+      "name": "MboMa & Co.",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://mboma.org/logo-og.png"
+      }
+    }
+  };
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }}
+      />
+    </>
   );
 };
 
