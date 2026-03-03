@@ -54,4 +54,16 @@ export const routes: RouteObject[] = [
     path: '/moni_offer',
     element: <MoniOfferPage />,
   },
+  {
+    path: '/moni_offer/',
+    element: <MoniOfferPage />,
+  },
+  {
+    path: '/moni-offer',
+    element: <MoniOfferPage />,
+  },
+  {
+    path: '/moni-offer/',
+    element: <MoniOfferPage />,
+  },
 ];
