@@ -63,7 +63,7 @@ const AuditBookingPage: React.FC = () => {
 
       console.log('✅ Audit request saved to Firestore:', auditId);
 
-      // 2. Send confirmation email via Cloud Function (Resend)
+      // 2. Ask the notification service hosted on the VM to send both emails.
       await sendAuditConfirmationEmail({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -77,7 +77,7 @@ const AuditBookingPage: React.FC = () => {
         status: 'new'
       });
 
-      console.log('✅ Confirmation email sent via Resend');
+      console.log('✅ Confirmation request sent to the VM');
 
       setSubmitStatus('success');
       setFormData({

@@ -1,5 +1,7 @@
 // Email service using Resend API
-const RESEND_API_KEY = 're_BQTcygKP_8ivtZ5YVxbNXcAaAe8QsQcg8';
+// Deprecated browser-side service. Never put a private provider key in Vite/client code.
+// Notifications now pass through the API hosted on the VM.
+const RESEND_API_KEY = '';
 const FROM_EMAIL = 'onboarding@resend.dev';
 const ADMIN_EMAIL = 'mbomacorporation.inc@gmail.com';
 

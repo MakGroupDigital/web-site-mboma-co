@@ -184,7 +184,7 @@ const TechnologyAuditCampaignPage: React.FC = () => {
         submissionDate: request.submissionDate,
         objective: form.priorities.join(' · '),
         details,
-      }).catch((emailError) => console.error('Audit EmailJS notification failed:', emailError));
+      }).catch((emailError) => console.error('Audit VM notification failed:', emailError));
       setReference(referenceNumber);
       setForm(initialForm);
       setSubmitStatus('success');

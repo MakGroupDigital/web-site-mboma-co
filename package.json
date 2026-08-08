@@ -8,6 +8,8 @@
     "build": "vite build",
     "test:campaigns": "vitest run tests/campaignForms.test.tsx",
     "test:campaigns:firestore": "firebase emulators:exec --only firestore \"node scripts/testCampaignForms.mjs\"",
+    "notifications:build": "npm --prefix notification-server run build",
+    "notifications:test": "npm --prefix notification-server test",
     "preview": "vite preview",
     "deploy": "npm run build && firebase deploy",
     "deploy:functions": "firebase deploy --only functions",

@@ -72,7 +72,7 @@ const MasterclassPage: React.FC = () => {
         
         console.log('✅ Registration saved to Firestore:', registrationId);
         
-        // Send confirmation email via Cloud Function (Resend)
+        // Ask the notification service hosted on the VM to send both emails.
         await sendConfirmationEmail(registrationId, {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -86,7 +86,7 @@ const MasterclassPage: React.FC = () => {
           paymentStatus: 'pending'
         });
         
-        console.log('✅ Confirmation email sent via Resend');
+        console.log('✅ Confirmation request sent to the VM');
         
       setCurrentStep(2);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -177,7 +177,7 @@ const MasterclassPage: React.FC = () => {
 
       console.log('✅ Registration saved to Firestore:', registrationId);
 
-      // 2. Send confirmation email via Cloud Function
+      // 2. Ask the notification service hosted on the VM to send both emails.
       await sendConfirmationEmail(registrationId, {
         firstName: formData.firstName,
         lastName: formData.lastName,

@@ -1,7 +1,6 @@
 import { db } from './firebase';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
-import { httpsCallable } from 'firebase/functions';
-import { functions } from './firebase';
+import { sendFormNotification } from './notificationApiService';
 
 export interface AuditRequest {
   firstName: string;
@@ -38,28 +37,27 @@ export const saveAuditRequest = async (data: AuditRequest): Promise<string> => {
 };
 
 /**
- * Send audit confirmation email via Cloud Function
+ * Send audit confirmation through the notification service hosted on the VM.
  */
 export const sendAuditConfirmationEmail = async (data: AuditRequest): Promise<void> => {
   try {
-    console.log('📧 Sending audit confirmation email via Cloud Function...');
-
-    const sendEmail = httpsCallable(functions, 'sendAuditConfirmation');
-    await sendEmail({
+    await sendFormNotification({
+      formType: 'audit_booking',
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
-      phone: data.phone || 'N/A',
-      company: data.company,
-      auditType: data.auditType,
-      message: data.message,
+      phone: data.phone || '',
+      organisation: data.company,
       referenceNumber: data.referenceNumber,
-      submissionDate: data.submissionDate
+      submissionDate: data.submissionDate,
+      status: 'Nouvelle demande',
+      details: {
+        "Type d’audit": data.auditType,
+        Message: data.message || 'Non précisé',
+      },
     });
-
-    console.log('✅ Audit confirmation email sent');
   } catch (error) {
-    console.error('❌ Error sending audit email:', error);
+    console.error('❌ VM notification service could not send the audit email:', error);
     // Don't throw - let the user continue even if email fails
   }
 };

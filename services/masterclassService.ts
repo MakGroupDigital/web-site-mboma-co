@@ -1,8 +1,7 @@
 import { db, storage } from './firebase';
 import { collection, addDoc, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { httpsCallable } from 'firebase/functions';
-import { functions } from './firebase';
+import { sendFormNotification } from './notificationApiService';
 
 export interface MasterclassRegistration {
   firstName: string;
@@ -93,35 +92,32 @@ export const updateRegistrationWithPdfs = async (
 };
 
 /**
- * Send confirmation email via Cloud Function
+ * Send confirmation through the notification service hosted on the VM.
  */
 export const sendConfirmationEmail = async (
   registrationId: string,
   data: MasterclassRegistration
 ): Promise<void> => {
   try {
-    console.log('📧 Sending confirmation email via Cloud Function...');
-
-    const sendEmail = httpsCallable(functions, 'sendMasterclassConfirmation');
-    await sendEmail({
-      registrationId,
+    await sendFormNotification({
+      formType: 'masterclass',
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
       phone: data.phone,
-      company: data.company,
-      country: data.country,
-      city: data.city,
+      organisation: data.company,
       referenceNumber: data.referenceNumber,
-      registrationDate: data.registrationDate,
-      paymentStatus: data.paymentStatus,
-      registrationPdfUrl: data.registrationPdfUrl,
-      receiptPdfUrl: data.receiptPdfUrl
+      submissionDate: data.registrationDate,
+      status: data.paymentStatus,
+      details: {
+        Pays: data.country,
+        Ville: data.city,
+        "Identifiant d’enregistrement": registrationId,
+        Transaction: data.transactionId || 'Non renseignée',
+      },
     });
-
-    console.log('✅ Confirmation email sent');
   } catch (error) {
-    console.error('❌ Error sending email:', error);
+    console.error('❌ VM notification service could not send the masterclass email:', error);
     // Don't throw - let the user continue even if email fails
   }
 };

@@ -1,9 +1,4 @@
-import emailjs from '@emailjs/browser';
-
-const EMAILJS_SERVICE_ID = 'service_zsemrdi';
-const EMAILJS_PUBLIC_KEY = 'ysWtYnFgf6oXyDQdz';
-const EMAILJS_ADMIN_TEMPLATE = 'template_d4tyizn';
-const ADMIN_EMAIL = 'co@mboma.org';
+import { NotificationFormType, sendFormNotification } from './notificationApiService';
 
 export interface CampaignEmailPayload {
   campaignName: string;
@@ -18,29 +13,31 @@ export interface CampaignEmailPayload {
   details: string;
 }
 
-/**
- * Notify the MboMa team through the project's existing EmailJS service.
- * Firestore remains the source of truth, so an email outage never loses a lead.
- */
+const campaignTypes: Record<string, NotificationFormType> = {
+  'Technology Partnership Program': 'technology_partnership',
+  'Audit technologique': 'technology_audit',
+  'Digitalisez votre entreprise': 'digitalization',
+  'Vous avez une idée d’application ?': 'app_idea',
+  'Automatisez vos tâches avec l’IA': 'ai_automation',
+};
+
 export const sendCampaignLeadEmail = async (data: CampaignEmailPayload): Promise<void> => {
-  await emailjs.send(
-    EMAILJS_SERVICE_ID,
-    EMAILJS_ADMIN_TEMPLATE,
-    {
-      to_email: ADMIN_EMAIL,
-      name: `${data.firstName} ${data.lastName}`,
-      email: data.email,
-      reply_to: data.email,
-      phone: data.phone || 'N/A',
-      company: data.organisation || 'N/A',
-      service_type: data.campaignName,
-      reference_number: data.referenceNumber,
-      submission_date: data.submissionDate,
-      status: 'Nouvelle demande',
-      additional_label: 'Objectif / Priorités',
-      additional_info: data.objective || 'À qualifier',
-      message: data.details || 'Aucun détail complémentaire',
+  const formType = campaignTypes[data.campaignName];
+  if (!formType) throw new Error(`Unknown campaign notification type: ${data.campaignName}`);
+
+  await sendFormNotification({
+    formType,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    phone: data.phone,
+    organisation: data.organisation,
+    referenceNumber: data.referenceNumber,
+    submissionDate: data.submissionDate,
+    status: 'Nouvelle demande',
+    details: {
+      'Objectif / Priorités': data.objective || 'À qualifier',
+      Détails: data.details || 'Aucun détail complémentaire',
     },
-    { publicKey: EMAILJS_PUBLIC_KEY },
-  );
+  });
 };
