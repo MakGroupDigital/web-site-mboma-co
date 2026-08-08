@@ -3,6 +3,7 @@ import request from 'supertest';
 import { createApp } from './app.js';
 import type { AppConfig } from './config.js';
 import type { Mailer } from './mailer.js';
+import { buildEmails } from './templates.js';
 
 const config = {
   NODE_ENV: 'test',
@@ -35,6 +36,12 @@ const validPayload = {
 };
 
 describe('notification API', () => {
+  it('embeds the MboMa logo reference in visitor and admin emails', () => {
+    const emails = buildEmails(validPayload);
+    expect(emails.user.html).toContain('cid:mboma-logo');
+    expect(emails.admin.html).toContain('cid:mboma-logo');
+  });
+
   it('sends a validated form submission through the injected mailer', async () => {
     const sendSubmission = vi.fn().mockResolvedValue(undefined);
     const mailer = { sendSubmission, verify: vi.fn() } as unknown as Mailer;

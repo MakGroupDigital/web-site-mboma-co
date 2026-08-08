@@ -64,7 +64,7 @@ const SEOHead: React.FC = () => {
       "name": "MboMa & Co.",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://mboma.org/logo-og.png"
+        "url": "https://www.mboma.org/mboma-share-2026.png"
       }
     }
   };

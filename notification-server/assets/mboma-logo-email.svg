@@ -1,0 +1,15 @@
+<svg width="600" height="150" viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#FFFFFF" stroke-width="4">
+    <circle cx="74" cy="75" r="57"/>
+  </g>
+  <g fill="#FFFFFF">
+    <ellipse cx="51" cy="61" rx="9" ry="12"/>
+    <ellipse cx="66" cy="45" rx="9" ry="12"/>
+    <ellipse cx="83" cy="45" rx="9" ry="12"/>
+    <ellipse cx="98" cy="61" rx="9" ry="12"/>
+    <path d="M47 96c0-16 13-25 27-25s29 9 29 25c0 15-15 27-29 27S47 111 47 96Z"/>
+    <rect x="154" y="31" width="2" height="88" opacity="0.45"/>
+    <text x="185" y="82" font-family="Arial, Helvetica, sans-serif" font-size="49" font-weight="700" letter-spacing="1">MboMa &amp; Co.</text>
+    <text x="187" y="111" font-family="Arial, Helvetica, sans-serif" font-size="17" letter-spacing="3" opacity="0.88">INSTITUTION PANAFRICAINE</text>
+  </g>
+</svg>

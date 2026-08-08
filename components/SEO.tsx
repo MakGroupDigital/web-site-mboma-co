@@ -14,7 +14,7 @@ const SEO: React.FC<SEOProps> = ({
   title,
   description,
   url = 'https://www.mboma.org',
-  image = 'https://www.mboma.org/og-image.png',
+  image = 'https://www.mboma.org/mboma-share-2026.png',
   type = 'website',
   keywords = 'MboMa, Afrique, gouvernance, innovation, développement, souveraineté, technologie, panafricain'
 }) => {
@@ -34,8 +34,11 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:secure_url" content={image} />
+      <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content="Logo MboMa & Co. - Institution Panafricaine" />
       <meta property="og:site_name" content="MboMa & Co." />
       <meta property="og:locale" content="fr_FR" />
       
@@ -45,6 +48,7 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+      <meta name="twitter:image:alt" content="Logo MboMa & Co. - Institution Panafricaine" />
       
       {/* Canonical URL */}
       <link rel="canonical" href={url} />
@@ -53,4 +57,3 @@ const SEO: React.FC<SEOProps> = ({
 };
 
 export default SEO;
-

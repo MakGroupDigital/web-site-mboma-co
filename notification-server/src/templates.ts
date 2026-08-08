@@ -22,8 +22,8 @@ const layout = (title: string, content: string): string => `<!doctype html>
 <title>${escapeHtml(title)}</title></head>
 <body style="margin:0;background:#f4f5f1;font-family:Arial,sans-serif;color:#333">
   <div style="max-width:640px;margin:0 auto;padding:28px 14px">
-    <div style="background:#66883d;color:#fff;padding:26px 30px;border-radius:14px 14px 0 0">
-      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase">MboMa &amp; Co.</div>
+    <div style="background:#66883d;color:#fff;padding:24px 30px 26px;border-radius:14px 14px 0 0">
+      <img src="cid:mboma-logo" width="270" alt="MboMa &amp; Co." style="display:block;width:270px;max-width:100%;height:auto;margin:0 0 18px" />
       <h1 style="font-size:25px;margin:10px 0 0">${escapeHtml(title)}</h1>
     </div>
     <div style="background:#fff;padding:30px;border-radius:0 0 14px 14px">${content}</div>

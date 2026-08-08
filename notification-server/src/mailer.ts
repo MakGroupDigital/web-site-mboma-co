@@ -1,7 +1,15 @@
 import nodemailer from 'nodemailer';
+import { readFileSync } from 'node:fs';
 import type { AppConfig } from './config.js';
 import { buildEmails } from './templates.js';
 import type { NotificationPayload } from './types.js';
+
+const logoAttachment = {
+  filename: 'mboma-logo.png',
+  content: readFileSync(new URL('../assets/mboma-logo-email.png', import.meta.url)),
+  cid: 'mboma-logo',
+  contentDisposition: 'inline' as const,
+};
 
 export const createMailer = (config: AppConfig) => {
   const transport = nodemailer.createTransport({
@@ -30,6 +38,7 @@ export const createMailer = (config: AppConfig) => {
           subject: emails.user.subject,
           text: emails.user.text,
           html: emails.user.html,
+          attachments: [logoAttachment],
           disableFileAccess: true,
           disableUrlAccess: true,
         }),
@@ -40,6 +49,7 @@ export const createMailer = (config: AppConfig) => {
           subject: emails.admin.subject,
           text: emails.admin.text,
           html: emails.admin.html,
+          attachments: [logoAttachment],
           disableFileAccess: true,
           disableUrlAccess: true,
         }),
