@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { saveAuditRequest, sendAuditConfirmationEmail } from '../services/auditService';
+import { sendAuditConfirmationEmail } from '../services/auditService';
 import { AUDIT_CAMPAIGN } from '../constants';
 
 interface AuditFormData {
@@ -47,23 +47,6 @@ const AuditBookingPage: React.FC = () => {
       const referenceNumber = `AUDIT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
       const submissionDate = new Date().toLocaleDateString('fr-FR');
 
-      // 1. Save audit request to Firestore
-      const auditId = await saveAuditRequest({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: 'N/A',
-        company: formData.company,
-        auditType: formData.auditType,
-        message: formData.message,
-        referenceNumber,
-        submissionDate,
-        status: 'new'
-      });
-
-      console.log('✅ Audit request saved to Firestore:', auditId);
-
-      // 2. Ask the notification service hosted on the VM to send both emails.
       await sendAuditConfirmationEmail({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -76,8 +59,6 @@ const AuditBookingPage: React.FC = () => {
         submissionDate,
         status: 'new'
       });
-
-      console.log('✅ Confirmation request sent to the VM');
 
       setSubmitStatus('success');
       setFormData({

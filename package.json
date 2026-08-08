@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "vite build",
     "test:campaigns": "vitest run tests/campaignForms.test.tsx",
-    "test:campaigns:firestore": "firebase emulators:exec --only firestore \"node scripts/testCampaignForms.mjs\"",
     "notifications:build": "npm --prefix notification-server run build",
     "notifications:test": "npm --prefix notification-server test",
     "preview": "vite preview",
@@ -20,7 +19,6 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
-    "firebase": "^10.14.1",
     "framer-motion": "^11.11.11",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.0.0",

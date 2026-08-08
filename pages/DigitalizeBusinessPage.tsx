@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CampaignRequest, saveCampaignRequest, sendCampaignConfirmation } from '../services/campaignService';
+import { CampaignRequest, sendCampaignConfirmation } from '../services/campaignService';
 
 const campaignUrl = 'https://www.mboma.org/digitalisez-votre-entreprise';
 
@@ -110,14 +110,13 @@ const DigitalizeBusinessPage: React.FC = () => {
       referenceNumber, submissionDate: new Date().toLocaleDateString('fr-FR'), status: 'new',
     };
     try {
-      await saveCampaignRequest(request);
       await sendCampaignConfirmation(request);
       setReference(referenceNumber);
       setForm(initialForm);
       setStatus('success');
     } catch (error) {
       console.error('Digitalization request failed:', error);
-      setFormError("Le projet n’a pas pu être enregistré. Vérifiez votre connexion puis réessayez, ou écrivez à co@mboma.org.");
+      setFormError("Le projet n’a pas pu être transmis. Vérifiez votre connexion puis réessayez, ou écrivez à co@mboma.org.");
       setStatus('error');
     } finally { setIsSubmitting(false); }
   };

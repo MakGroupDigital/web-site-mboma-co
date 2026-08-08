@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   PartnershipRequest,
-  savePartnershipRequest,
   sendPartnershipConfirmationEmail,
 } from '../services/partnershipService';
 
@@ -143,7 +142,6 @@ const TechnologyPartnershipPage: React.FC = () => {
     };
 
     try {
-      await savePartnershipRequest(request);
       await sendPartnershipConfirmationEmail(request);
       setReferenceNumber(generatedReference);
       setFormData(initialFormData);

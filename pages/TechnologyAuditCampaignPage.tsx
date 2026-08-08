@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { saveAuditRequest } from '../services/auditService';
 import { sendCampaignLeadEmail } from '../services/campaignEmailService';
 
 const campaignUrl = 'https://www.mboma.org/audit-technologique';
@@ -172,7 +171,6 @@ const TechnologyAuditCampaignPage: React.FC = () => {
     };
 
     try {
-      await saveAuditRequest(request);
       await sendCampaignLeadEmail({
         campaignName: 'Audit technologique',
         firstName: request.firstName,
@@ -184,13 +182,13 @@ const TechnologyAuditCampaignPage: React.FC = () => {
         submissionDate: request.submissionDate,
         objective: form.priorities.join(' · '),
         details,
-      }).catch((emailError) => console.error('Audit VM notification failed:', emailError));
+      });
       setReference(referenceNumber);
       setForm(initialForm);
       setSubmitStatus('success');
     } catch (error) {
       console.error('Technology audit request failed:', error);
-      setFormError("La demande n’a pas pu être enregistrée. Vérifiez votre connexion puis réessayez, ou écrivez à co@mboma.org.");
+      setFormError("La demande n’a pas pu être transmise. Vérifiez votre connexion puis réessayez, ou écrivez à co@mboma.org.");
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);

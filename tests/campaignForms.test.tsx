@@ -4,16 +4,9 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const serviceMocks = vi.hoisted(() => ({
-  saveAuditRequest: vi.fn(),
   sendCampaignLeadEmail: vi.fn(),
-  savePartnershipRequest: vi.fn(),
   sendPartnershipConfirmationEmail: vi.fn(),
-  saveCampaignRequest: vi.fn(),
   sendCampaignConfirmation: vi.fn(),
-}));
-
-vi.mock('../services/auditService', () => ({
-  saveAuditRequest: serviceMocks.saveAuditRequest,
 }));
 
 vi.mock('../services/campaignEmailService', () => ({
@@ -21,12 +14,10 @@ vi.mock('../services/campaignEmailService', () => ({
 }));
 
 vi.mock('../services/partnershipService', () => ({
-  savePartnershipRequest: serviceMocks.savePartnershipRequest,
   sendPartnershipConfirmationEmail: serviceMocks.sendPartnershipConfirmationEmail,
 }));
 
 vi.mock('../services/campaignService', () => ({
-  saveCampaignRequest: serviceMocks.saveCampaignRequest,
   sendCampaignConfirmation: serviceMocks.sendCampaignConfirmation,
 }));
 
@@ -60,11 +51,8 @@ afterEach(cleanup);
 
 beforeEach(() => {
   Object.values(serviceMocks).forEach((mock) => mock.mockReset());
-  serviceMocks.saveAuditRequest.mockResolvedValue('audit-test-id');
   serviceMocks.sendCampaignLeadEmail.mockResolvedValue(undefined);
-  serviceMocks.savePartnershipRequest.mockResolvedValue('partnership-test-id');
   serviceMocks.sendPartnershipConfirmationEmail.mockResolvedValue(undefined);
-  serviceMocks.saveCampaignRequest.mockResolvedValue('campaign-test-id');
   serviceMocks.sendCampaignConfirmation.mockResolvedValue(undefined);
 });
 
@@ -107,8 +95,7 @@ describe('campaign forms', () => {
     await user.click(screen.getByRole('checkbox', { name: /J’accepte/ }));
     await submitValidForm(user, 'Soumettre la demande');
 
-    await waitFor(() => expect(serviceMocks.savePartnershipRequest).toHaveBeenCalledOnce());
-    expect(serviceMocks.sendPartnershipConfirmationEmail).toHaveBeenCalledOnce();
+    await waitFor(() => expect(serviceMocks.sendPartnershipConfirmationEmail).toHaveBeenCalledOnce());
     expect(await screen.findByText('Demande transmise')).toBeTruthy();
   });
 
@@ -127,8 +114,7 @@ describe('campaign forms', () => {
     await user.click(screen.getByRole('checkbox', { name: /J’accepte/ }));
     await submitValidForm(user, 'Soumettre la demande d’audit');
 
-    await waitFor(() => expect(serviceMocks.saveAuditRequest).toHaveBeenCalledOnce());
-    expect(serviceMocks.sendCampaignLeadEmail).toHaveBeenCalledOnce();
+    await waitFor(() => expect(serviceMocks.sendCampaignLeadEmail).toHaveBeenCalledOnce());
     expect(await screen.findByText('Demande enregistrée')).toBeTruthy();
   });
 
@@ -148,8 +134,7 @@ describe('campaign forms', () => {
     await user.click(screen.getByRole('checkbox', { name: /J’accepte/ }));
     await submitValidForm(user, 'Soumettre mon projet');
 
-    await waitFor(() => expect(serviceMocks.saveCampaignRequest).toHaveBeenCalledOnce());
-    expect(serviceMocks.sendCampaignConfirmation).toHaveBeenCalledOnce();
+    await waitFor(() => expect(serviceMocks.sendCampaignConfirmation).toHaveBeenCalledOnce());
     expect(await screen.findByText('Projet transmis')).toBeTruthy();
   });
 
@@ -169,8 +154,7 @@ describe('campaign forms', () => {
     await user.click(screen.getByRole('checkbox', { name: /J’accepte/ }));
     await submitValidForm(user, 'Soumettre mon idée');
 
-    await waitFor(() => expect(serviceMocks.saveCampaignRequest).toHaveBeenCalledOnce());
-    expect(serviceMocks.sendCampaignConfirmation).toHaveBeenCalledOnce();
+    await waitFor(() => expect(serviceMocks.sendCampaignConfirmation).toHaveBeenCalledOnce());
     expect(await screen.findByText('Idée transmise')).toBeTruthy();
   });
 
@@ -190,14 +174,13 @@ describe('campaign forms', () => {
     await user.click(screen.getByRole('checkbox', { name: /J’accepte/ }));
     await submitValidForm(user, 'Soumettre mon besoin');
 
-    await waitFor(() => expect(serviceMocks.saveCampaignRequest).toHaveBeenCalledOnce());
-    expect(serviceMocks.sendCampaignConfirmation).toHaveBeenCalledOnce();
+    await waitFor(() => expect(serviceMocks.sendCampaignConfirmation).toHaveBeenCalledOnce());
     expect(await screen.findByText('Demande transmise')).toBeTruthy();
   });
 
-  it('does not report a false selection error when persistence fails', async () => {
+  it('reports an email delivery failure without showing a false selection error', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    serviceMocks.saveCampaignRequest.mockRejectedValueOnce(new Error('Firestore unavailable'));
+    serviceMocks.sendCampaignConfirmation.mockRejectedValueOnce(new Error('Notification API unavailable'));
     const user = userEvent.setup();
     render(<DigitalizeBusinessPage />);
 
@@ -212,7 +195,7 @@ describe('campaign forms', () => {
     await user.click(screen.getByRole('checkbox', { name: /J’accepte/ }));
     await submitValidForm(user, 'Soumettre mon projet');
 
-    expect(await screen.findByText(/Le projet n’a pas pu être enregistré/)).toBeTruthy();
+    expect(await screen.findByText(/Le projet n’a pas pu être transmis/)).toBeTruthy();
     expect(screen.queryByText(/Sélectionnez au moins un processus/)).toBeNull();
   });
 });

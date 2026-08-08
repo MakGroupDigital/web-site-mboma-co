@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { generateRegistrationPDF, generatePaymentReceiptPDF, RegistrationData, PaymentData } from '../services/pdfGenerator';
-import { saveMasterclassRegistration, uploadPdfToStorage, updateRegistrationWithPdfs, sendConfirmationEmail } from '../services/masterclassService';
+import { sendConfirmationEmail } from '../services/masterclassService';
 import { countries, countriesCities } from '../data/countriesCities';
 
 const MasterclassPage: React.FC = () => {
@@ -56,24 +56,7 @@ const MasterclassPage: React.FC = () => {
       const refNum = generateReferenceNumber();
       setReferenceNumber(refNum);
         
-        // Save registration to Firebase immediately
-        const registrationId = await saveMasterclassRegistration({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          company: formData.company,
-          country: formData.country,
-          city: formData.city,
-          referenceNumber: refNum,
-          registrationDate: new Date().toLocaleDateString('fr-FR'),
-          paymentStatus: 'pending'
-        });
-        
-        console.log('✅ Registration saved to Firestore:', registrationId);
-        
-        // Ask the notification service hosted on the VM to send both emails.
-        await sendConfirmationEmail(registrationId, {
+        await sendConfirmationEmail(refNum, {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
@@ -159,26 +142,7 @@ const MasterclassPage: React.FC = () => {
 
   const sendConfirmationMessages = async (paymentStatus: 'pending' | 'completed' | 'office') => {
     try {
-      // 1. Save registration to Firestore
-      const registrationId = await saveMasterclassRegistration({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        country: formData.country,
-        city: formData.city,
-        referenceNumber,
-        registrationDate: new Date().toLocaleDateString('fr-FR'),
-        paymentStatus: paymentStatus as 'pending' | 'completed' | 'office',
-        transactionId: paymentStatus === 'completed' ? transactionId : undefined,
-        paymentDate: paymentStatus === 'completed' ? new Date().toLocaleDateString('fr-FR') : undefined
-      });
-
-      console.log('✅ Registration saved to Firestore:', registrationId);
-
-      // 2. Ask the notification service hosted on the VM to send both emails.
-      await sendConfirmationEmail(registrationId, {
+      await sendConfirmationEmail(referenceNumber, {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,

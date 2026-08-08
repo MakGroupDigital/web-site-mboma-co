@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CampaignRequest, saveCampaignRequest, sendCampaignConfirmation } from '../services/campaignService';
+import { CampaignRequest, sendCampaignConfirmation } from '../services/campaignService';
 
 const campaignUrl = 'https://www.mboma.org/automatisez-vos-taches-avec-ia';
 
@@ -84,9 +84,9 @@ const AiAutomationCampaignPage: React.FC = () => {
       referenceNumber, submissionDate: new Date().toLocaleDateString('fr-FR'), status: 'new',
     };
     try {
-      await saveCampaignRequest(request); await sendCampaignConfirmation(request);
+      await sendCampaignConfirmation(request);
       setReference(referenceNumber); setForm(initialForm); setStatus('success');
-    } catch (error) { console.error('AI automation request failed:', error); setFormError("La demande n’a pas pu être enregistrée. Vérifiez votre connexion puis réessayez, ou écrivez à co@mboma.org."); setStatus('error'); }
+    } catch (error) { console.error('AI automation request failed:', error); setFormError("La demande n’a pas pu être transmise. Vérifiez votre connexion puis réessayez, ou écrivez à co@mboma.org."); setStatus('error'); }
     finally { setIsSubmitting(false); }
   };
 

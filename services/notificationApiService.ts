@@ -23,9 +23,7 @@ export interface NotificationRequest {
 const configuredUrl = import.meta.env.VITE_NOTIFICATION_API_URL?.trim();
 const API_BASE_URL = configuredUrl
   ? configuredUrl.replace(/\/$/, '')
-  : import.meta.env.DEV
-    ? 'http://localhost:8787'
-    : 'https://mboma-notifications.104.154.90.30.sslip.io';
+  : 'https://mboma-notifications.104.154.90.30.sslip.io';
 
 export const sendFormNotification = async (data: NotificationRequest): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/api/notifications/form-submission`, {
@@ -35,6 +33,7 @@ export const sendFormNotification = async (data: NotificationRequest): Promise<v
   });
 
   if (!response.ok) {
-    throw new Error(`Notification API returned ${response.status}`);
+    const body = await response.json().catch(() => null) as { error?: string } | null;
+    throw new Error(body?.error || `Notification API returned ${response.status}`);
   }
 };
