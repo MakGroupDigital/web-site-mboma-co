@@ -95,6 +95,51 @@ const seoData: Record<string, SeoEntry> = {
     type: 'article',
     robots: 'index, follow'
   },
+  '/technology-partnership-program': {
+    title: 'Technology Partnership Program',
+    description: 'Investisseurs, entreprises et organisations : co-créez avec MboMa & Co. des solutions technologiques impactantes et durables.',
+    keywords: 'partenariat technologique, co-développement, investissement, innovation, entreprise, Afrique, MboMa',
+    image: '/technology-partnership-program.png',
+    imageAlt: 'Affiche officielle du Technology Partnership Program de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/audit-technologique': {
+    title: 'Audit Technologique',
+    description: 'Évaluez, sécurisez et optimisez votre infrastructure, réseau, cloud, cybersécurité, systèmes et applications avec MboMa & Co.',
+    keywords: 'audit technologique, infrastructure informatique, réseau, cloud, cybersécurité, systèmes, applications, MboMa',
+    image: '/audit-technologique.png',
+    imageAlt: 'Affiche officielle de la campagne Audit technologique de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/digitalisez-votre-entreprise': {
+    title: 'Digitalisez votre entreprise',
+    description: 'Centralisez vos opérations dans un système conçu pour votre entreprise avec l’accompagnement technologique de MboMa & Co.',
+    keywords: 'digitalisation entreprise, transformation numérique, logiciel sur mesure, centralisation opérations, tableau de bord, MboMa',
+    image: '/digitalisez-votre-entreprise.png',
+    imageAlt: 'Affiche officielle de la campagne Digitalisez votre entreprise de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/idee-application': {
+    title: 'Vous avez une idée d’application ?',
+    description: 'MboMa & Co. transforme votre idée d’application en produit technologique fonctionnel, de la conception au lancement.',
+    keywords: 'création application, développement mobile, application web, produit technologique, prototype, startup, MboMa',
+    image: '/idee-application.png',
+    imageAlt: 'Affiche officielle Vous avez une idée d’application de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/automatisez-vos-taches-avec-ia': {
+    title: 'Automatisez vos tâches avec l’IA',
+    description: 'Gagnez du temps, améliorez la productivité et automatisez vos opérations avec des solutions d’intelligence artificielle conçues par MboMa & Co.',
+    keywords: 'automatisation IA, intelligence artificielle entreprise, automatiser tâches, productivité, processus métier, MboMa',
+    image: '/automatisation-ia.png',
+    imageAlt: 'Affiche officielle Automatisez vos tâches avec l’IA de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
   '/moni_offer': {
     title: 'Offre Moni.IO - Opportunite d acquisition',
     description: 'Super-app Fintech Moni.IO en vente: paiement, encaissement et transfert via email, telephone, QR code ou numero Moni, retrait Mobile Money en Afrique centrale, achat credit & forfait. Application finalisee a 100 % et prete a la commercialisation.',
@@ -127,6 +172,21 @@ const normalizePath = (pathname: string): string => {
   }
   if (noTrailingSlash === '/moni-offer') {
     return '/moni_offer';
+  }
+  if (noTrailingSlash === '/partnership') {
+    return '/technology-partnership-program';
+  }
+  if (noTrailingSlash === '/technology-audit') {
+    return '/audit-technologique';
+  }
+  if (noTrailingSlash === '/digitalisation-entreprise') {
+    return '/digitalisez-votre-entreprise';
+  }
+  if (noTrailingSlash === '/app-idea') {
+    return '/idee-application';
+  }
+  if (noTrailingSlash === '/automatisation-ia') {
+    return '/automatisez-vos-taches-avec-ia';
   }
 
   return noTrailingSlash;

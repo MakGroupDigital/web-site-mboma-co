@@ -32,8 +32,17 @@ const Header: React.FC = () => {
     { label: 'Institution', path: '/institution' },
     { label: 'Vision & Valeurs', path: '/vision' },
     { label: 'Expertises', path: '/expertises' },
+    { label: 'Partenariat', path: '/technology-partnership-program' },
     { label: 'Architecture', path: '/architecture' },
     { label: 'Rapports', path: '/rapports' },
+  ];
+
+  const campaignItems = [
+    { label: 'Digitalisez votre entreprise', path: '/digitalisez-votre-entreprise' },
+    { label: 'Votre idée d’application', path: '/idee-application' },
+    { label: 'Automatisez avec l’IA', path: '/automatisez-vos-taches-avec-ia' },
+    { label: 'Technology Partnership', path: '/technology-partnership-program' },
+    { label: 'Audit technologique', path: '/audit-technologique' },
   ];
 
   const handleNavigation = (path: string) => {
@@ -56,7 +65,7 @@ const Header: React.FC = () => {
             <Logo variant="color" size="sm" />
           </button>
 
-          <nav className="hidden lg:flex items-center gap-10">
+          <nav className="hidden xl:flex items-center gap-7">
             {navItems.map((item) => (
               <button
                 key={item.path}
@@ -87,14 +96,14 @@ const Header: React.FC = () => {
             
             <button
               onClick={() => handleNavigation('/audit-booking')}
-              className="hidden lg:block bg-institutional-orange text-white px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-institutional-orange/90 transition-all transform hover:scale-105 active:scale-95"
+              className="hidden xl:block bg-institutional-orange text-white px-5 py-2 text-xs uppercase tracking-widest font-bold hover:bg-institutional-orange/90 transition-all transform hover:scale-105 active:scale-95"
             >
               Audit Gratuit
             </button>
 
             <button
               onClick={() => handleNavigation('/masterclass')}
-              className="hidden lg:block bg-institutional-green text-white px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-institutional-green/90 transition-all transform hover:scale-105 active:scale-95"
+              className="hidden xl:block bg-institutional-green text-white px-5 py-2 text-xs uppercase tracking-widest font-bold hover:bg-institutional-green/90 transition-all transform hover:scale-105 active:scale-95"
             >
               Masterclass
             </button>
@@ -104,7 +113,7 @@ const Header: React.FC = () => {
                 e.stopPropagation();
                 setMobileMenuOpen(!mobileMenuOpen);
               }}
-              className="lg:hidden text-institutional-grey hover:text-institutional-green transition-colors relative z-60"
+              className="xl:hidden text-institutional-grey hover:text-institutional-green transition-colors relative z-60"
             >
               <motion.div
                 animate={mobileMenuOpen ? { rotate: 180 } : { rotate: 0 }}
@@ -132,7 +141,7 @@ const Header: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-40 xl:hidden"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
@@ -145,19 +154,19 @@ const Header: React.FC = () => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.3 }}
-            className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 lg:hidden"
+            className="fixed top-0 right-0 h-full w-80 max-w-full overflow-y-auto bg-white shadow-2xl z-50 xl:hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-8 pt-24">
-              <nav className="space-y-6">
-                {navItems.map((item, i) => (
+              <nav className="space-y-2">
+                {navItems.filter((item) => item.path !== '/technology-partnership-program').map((item, i) => (
                   <motion.button
                     key={item.path}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
                     onClick={() => handleNavigation(item.path)}
-                    className={`block w-full text-left font-sans text-lg font-bold transition-colors py-3 border-b border-gray-100 ${
+                    className={`block w-full text-left font-sans text-base font-bold transition-colors py-3 border-b border-gray-100 ${
                       location.pathname === item.path ? 'text-institutional-green' : 'text-institutional-grey hover:text-institutional-green'
                     }`}
                   >
@@ -165,12 +174,36 @@ const Header: React.FC = () => {
                   </motion.button>
                 ))}
               </nav>
+
+              <div className="mt-8 border-t border-gray-100 pt-7">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.3em] text-institutional-orange">
+                  Campagnes
+                </p>
+                <nav className="space-y-1">
+                  {campaignItems.map((item, i) => (
+                    <motion.button
+                      key={item.path}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.25 + i * 0.06 }}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`block w-full border-l-2 px-4 py-2.5 text-left text-sm font-semibold transition-colors ${
+                        location.pathname === item.path
+                          ? 'border-institutional-green bg-institutional-green/5 text-institutional-green'
+                          : 'border-gray-100 text-institutional-grey/70 hover:border-institutional-green hover:text-institutional-green'
+                      }`}
+                    >
+                      {item.label}
+                    </motion.button>
+                  ))}
+                </nav>
+              </div>
               
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="mt-12 pt-8 border-t border-gray-100 space-y-4"
+                className="mt-8 pt-7 border-t border-gray-100 space-y-3 pb-8"
               >
                 <a 
                   href="mailto:co@mboma.org" 
