@@ -32,6 +32,7 @@ const footerLinks = [
       { label: 'Réserver un audit gratuit', path: '/audit-booking' },
       { label: 'Masterclass', path: '/masterclass' },
       { label: 'Offre Moni.IO', path: '/moni_offer' },
+      { label: 'Contexxe Cloud', path: '/contexxecloud' },
       { label: 'Étude : caméra & microphone', path: '/articles/espionnage-camera-micro-telephone' },
     ],
   },

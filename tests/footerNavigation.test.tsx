@@ -38,6 +38,7 @@ const publicRoutes = [
   '/audit-booking',
   '/masterclass',
   '/moni_offer',
+  '/contexxecloud',
   '/articles/espionnage-camera-micro-telephone',
 ];
 

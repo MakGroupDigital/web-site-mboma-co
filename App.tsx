@@ -156,6 +156,15 @@ const seoData: Record<string, SeoEntry> = {
     type: 'article',
     robots: 'index, follow'
   },
+  '/contexxecloud': {
+    title: 'Contexxe Cloud — Offre entreprise',
+    description: 'Sauvegarde, archivage intelligent, OCR, recherche avancée et sécurité dans une plateforme Contexxe Cloud dimensionnée pour votre organisation.',
+    keywords: 'Contexxe Cloud, stockage entreprise, archivage numérique, OCR, recherche documentaire, sauvegarde cloud, sécurité des données, Afrique',
+    image: BRAND_SHARE_IMAGE,
+    imageAlt: 'Contexxe Cloud — La mémoire numérique sécurisée et intelligente',
+    type: 'website',
+    robots: 'index, follow'
+  },
   '/moni_offer': {
     title: 'Offre Moni.IO - Opportunite d acquisition',
     description: 'Super-app Fintech Moni.IO en vente: paiement, encaissement et transfert via email, telephone, QR code ou numero Moni, retrait Mobile Money en Afrique centrale, achat credit & forfait. Application finalisee a 100 % et prete a la commercialisation.',

@@ -42,6 +42,13 @@ describe('notification API', () => {
     expect(emails.admin.html).toContain('cid:mboma-logo');
   });
 
+  it('labels Contexxe Cloud offer emails correctly', () => {
+    const emails = buildEmails({ ...validPayload, formType: 'contexxe_cloud' });
+    expect(emails.service).toBe('Contexxe Cloud');
+    expect(emails.user.subject).toContain('Contexxe Cloud');
+    expect(emails.admin.subject).toContain('Contexxe Cloud');
+  });
+
   it('sends a validated form submission through the injected mailer', async () => {
     const sendSubmission = vi.fn().mockResolvedValue(undefined);
     const mailer = { sendSubmission, verify: vi.fn() } as unknown as Mailer;

@@ -18,6 +18,7 @@ import DigitalizeBusinessPage from './pages/DigitalizeBusinessPage';
 import AppIdeaCampaignPage from './pages/AppIdeaCampaignPage';
 import AiAutomationCampaignPage from './pages/AiAutomationCampaignPage';
 import MobileSurveillanceArticlePage from './pages/MobileSurveillanceArticlePage';
+import ContexxeCloudPage from './pages/ContexxeCloudPage';
 
 export const routes: RouteObject[] = [
   {
@@ -115,5 +116,9 @@ export const routes: RouteObject[] = [
   {
     path: '/articles/espionnage-camera-micro-telephone',
     element: <MobileSurveillanceArticlePage />,
+  },
+  {
+    path: '/contexxecloud',
+    element: <ContexxeCloudPage />,
   },
 ];

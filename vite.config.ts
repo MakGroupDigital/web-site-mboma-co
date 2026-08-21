@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
           input: {
             main: path.resolve(__dirname, 'index.html'),
             article: path.resolve(__dirname, 'article.html'),
+            contexxecloud: path.resolve(__dirname, 'contexxecloud.html'),
           },
         },
       },

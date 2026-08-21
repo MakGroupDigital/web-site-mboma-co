@@ -12,6 +12,10 @@
         "destination": "/article.html"
       },
       {
+        "source": "/contexxecloud",
+        "destination": "/contexxecloud.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

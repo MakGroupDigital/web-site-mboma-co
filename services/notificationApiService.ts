@@ -4,6 +4,7 @@ export type NotificationFormType =
   | 'digitalization'
   | 'app_idea'
   | 'ai_automation'
+  | 'contexxe_cloud'
   | 'audit_booking'
   | 'masterclass';
 

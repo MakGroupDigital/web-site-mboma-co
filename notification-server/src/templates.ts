@@ -6,6 +6,7 @@ const formLabels: Record<FormType, string> = {
   digitalization: 'Digitalisez votre entreprise',
   app_idea: 'Idée d’application',
   ai_automation: 'Automatisation avec l’IA',
+  contexxe_cloud: 'Contexxe Cloud',
   audit_booking: 'Réservation d’audit',
   masterclass: 'Masterclass MboMa & Co.',
 };

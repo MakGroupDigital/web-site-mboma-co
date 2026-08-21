@@ -32,6 +32,7 @@ const Header: React.FC = () => {
     { label: 'Institution', path: '/institution' },
     { label: 'Vision & Valeurs', path: '/vision' },
     { label: 'Expertises', path: '/expertises' },
+    { label: 'Contexxe Cloud', path: '/contexxecloud' },
     { label: 'Partenariat', path: '/technology-partnership-program' },
     { label: 'Architecture', path: '/architecture' },
     { label: 'Rapports', path: '/rapports' },
