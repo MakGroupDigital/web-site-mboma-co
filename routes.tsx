@@ -17,6 +17,7 @@ import TechnologyAuditCampaignPage from './pages/TechnologyAuditCampaignPage';
 import DigitalizeBusinessPage from './pages/DigitalizeBusinessPage';
 import AppIdeaCampaignPage from './pages/AppIdeaCampaignPage';
 import AiAutomationCampaignPage from './pages/AiAutomationCampaignPage';
+import MobileSurveillanceArticlePage from './pages/MobileSurveillanceArticlePage';
 
 export const routes: RouteObject[] = [
   {
@@ -110,5 +111,9 @@ export const routes: RouteObject[] = [
   {
     path: '/automatisation-ia',
     element: <AiAutomationCampaignPage />,
+  },
+  {
+    path: '/articles/espionnage-camera-micro-telephone',
+    element: <MobileSurveillanceArticlePage />,
   },
 ];

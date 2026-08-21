@@ -8,6 +8,10 @@
     ],
     "rewrites": [
       {
+        "source": "/articles/espionnage-camera-micro-telephone",
+        "destination": "/article.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

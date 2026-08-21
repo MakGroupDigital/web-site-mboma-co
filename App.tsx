@@ -14,6 +14,8 @@ type SeoEntry = {
   keywords?: string;
   image: string;
   imageAlt: string;
+  imageWidth?: number;
+  imageHeight?: number;
   type?: 'website' | 'article';
   robots?: string;
 };
@@ -143,6 +145,17 @@ const seoData: Record<string, SeoEntry> = {
     type: 'website',
     robots: 'index, follow'
   },
+  '/articles/espionnage-camera-micro-telephone': {
+    title: 'Peut-on être espionné par la caméra ou le micro de son téléphone ?',
+    description: 'Caméra, microphone, applications malveillantes, spywares et Pegasus : comprendre les risques réels de surveillance mobile et protéger son smartphone.',
+    keywords: 'espionnage téléphone, caméra téléphone, microphone téléphone, cybersécurité mobile, spyware, Pegasus, vie privée smartphone, sécurité Android, sécurité iPhone',
+    image: '/articleimage.png',
+    imageAlt: 'Étude MboMa & Co. sur l’espionnage par la caméra ou le microphone d’un téléphone',
+    imageWidth: 1146,
+    imageHeight: 1148,
+    type: 'article',
+    robots: 'index, follow'
+  },
   '/moni_offer': {
     title: 'Offre Moni.IO - Opportunite d acquisition',
     description: 'Super-app Fintech Moni.IO en vente: paiement, encaissement et transfert via email, telephone, QR code ou numero Moni, retrait Mobile Money en Afrique centrale, achat credit & forfait. Application finalisee a 100 % et prete a la commercialisation.',
@@ -235,9 +248,9 @@ const DynamicSEO = () => {
       <meta property="og:image" content={imageUrl} />
       <meta property="og:image:secure_url" content={imageUrl} />
       <meta property="og:image:type" content="image/png" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={BRAND_SHARE_ALT} />
+      <meta property="og:image:width" content={String(currentSEO.imageWidth || 1200)} />
+      <meta property="og:image:height" content={String(currentSEO.imageHeight || 630)} />
+      <meta property="og:image:alt" content={currentSEO.imageAlt || BRAND_SHARE_ALT} />
       <meta property="og:site_name" content="MboMa & Co." />
       <meta property="og:locale" content="fr_FR" />
       
@@ -247,7 +260,7 @@ const DynamicSEO = () => {
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={currentSEO.description} />
       <meta name="twitter:image" content={imageUrl} />
-      <meta name="twitter:image:alt" content={BRAND_SHARE_ALT} />
+      <meta name="twitter:image:alt" content={currentSEO.imageAlt || BRAND_SHARE_ALT} />
       
       {/* Canonical */}
       <link rel="canonical" href={canonicalUrl} />

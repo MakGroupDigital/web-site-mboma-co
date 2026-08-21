@@ -38,6 +38,7 @@ const publicRoutes = [
   '/audit-booking',
   '/masterclass',
   '/moni_offer',
+  '/articles/espionnage-camera-micro-telephone',
 ];
 
 describe('footer navigation', () => {
