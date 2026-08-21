@@ -10,5 +10,30 @@ service cloud.firestore {
     match /audit_requests/{document=**} {
       allow read, write;
     }
+
+    // Public Technology Partnership Program application form.
+    // Only document creation is exposed; submitted applications are not public.
+    match /partnership_requests/{document} {
+      allow create: if request.resource.data.firstName is string
+                    && request.resource.data.lastName is string
+                    && request.resource.data.email is string
+                    && request.resource.data.organisation is string
+                    && request.resource.data.referenceNumber is string
+                    && request.resource.data.status == 'new';
+      allow read, update, delete: if false;
+    }
+
+    // Public campaign lead forms. Submitted leads remain private.
+    match /campaign_requests/{document} {
+      allow create: if request.resource.data.campaignName is string
+                    && request.resource.data.campaignSlug is string
+                    && request.resource.data.firstName is string
+                    && request.resource.data.lastName is string
+                    && request.resource.data.email is string
+                    && request.resource.data.organisation is string
+                    && request.resource.data.referenceNumber is string
+                    && request.resource.data.status == 'new';
+      allow read, update, delete: if false;
+    }
   }
 }

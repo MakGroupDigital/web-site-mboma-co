@@ -20,6 +20,15 @@ export default defineConfig(({ mode }) => {
           '@': path.resolve(__dirname, '.'),
         }
       },
+      build: {
+        rollupOptions: {
+          input: {
+            main: path.resolve(__dirname, 'index.html'),
+            article: path.resolve(__dirname, 'article.html'),
+            contexxecloud: path.resolve(__dirname, 'contexxecloud.html'),
+          },
+        },
+      },
       preview: {
         port: 3000,
         host: '0.0.0.0',

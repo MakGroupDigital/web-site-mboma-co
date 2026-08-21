@@ -1,0 +1,11 @@
+mboma-notifications.104.154.90.30.sslip.io {
+  encode gzip
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+
+  reverse_proxy mboma-notifications:8787
+}

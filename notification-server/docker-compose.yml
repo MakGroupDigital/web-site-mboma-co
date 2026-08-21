@@ -1,0 +1,15 @@
+services:
+  notifications:
+    container_name: mboma-notifications
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8790:8787"
+    networks:
+      - enkamba-realtime
+
+networks:
+  enkamba-realtime:
+    external: true
+    name: enkamba-realtime_realtime

@@ -1,7 +1,42 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { BRAND_SLOGAN } from '../constants';
+
+const footerLinks = [
+  {
+    title: 'Découvrir',
+    links: [
+      { label: 'Accueil', path: '/' },
+      { label: 'Institution', path: '/institution' },
+      { label: 'Vision & Valeurs', path: '/vision' },
+      { label: 'Expertises', path: '/expertises' },
+      { label: 'Architecture', path: '/architecture' },
+      { label: 'Rapports annuels', path: '/rapports' },
+    ],
+  },
+  {
+    title: 'Programmes',
+    links: [
+      { label: 'Technology Partnership', path: '/technology-partnership-program' },
+      { label: 'Audit technologique', path: '/audit-technologique' },
+      { label: 'Digitalisez votre entreprise', path: '/digitalisez-votre-entreprise' },
+      { label: 'Votre idée d’application', path: '/idee-application' },
+      { label: 'Automatisez avec l’IA', path: '/automatisez-vos-taches-avec-ia' },
+    ],
+  },
+  {
+    title: 'Accès directs',
+    links: [
+      { label: 'Réserver un audit gratuit', path: '/audit-booking' },
+      { label: 'Masterclass', path: '/masterclass' },
+      { label: 'Offre Moni.IO', path: '/moni_offer' },
+      { label: 'Contexxe Cloud', path: '/contexxecloud' },
+      { label: 'Étude : caméra & microphone', path: '/articles/espionnage-camera-micro-telephone' },
+    ],
+  },
+] as const;
 
 const Footer: React.FC = () => {
   return (
@@ -16,7 +51,7 @@ const Footer: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20">
+        <div className="grid grid-cols-1 gap-14 xl:grid-cols-[1.1fr_2fr] xl:gap-20 mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -28,36 +63,45 @@ const Footer: React.FC = () => {
             </p>
           </motion.div>
           
-          <div className="grid grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <h4 className="text-institutional-lightGreen uppercase tracking-widest text-xs font-bold mb-6">Institution</h4>
-              <ul className="space-y-4">
-                <li><span className="text-sm text-white/40 block">Brazzaville / Kinshasa / Paris</span></li>
-                <li><span className="text-sm text-white/40 block">Panafricanisme Moderne</span></li>
-              </ul>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-            >
-              <h4 className="text-institutional-lightGreen uppercase tracking-widest text-xs font-bold mb-6">Contact</h4>
-              <ul className="space-y-4">
-                <li>
-                  <a href="mailto:co@mboma.org" className="text-sm hover:text-institutional-orange text-white/60 transition-colors block">
-                    co@mboma.org
-                  </a>
-                </li>
-                <li className="text-sm text-white/30 italic">Document confidentiel & propriétaire</li>
-              </ul>
-            </motion.div>
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            {footerLinks.map((section, sectionIndex) => (
+              <motion.nav
+                key={section.title}
+                aria-label={section.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.15 + sectionIndex * 0.08 }}
+              >
+                <h4 className="text-institutional-lightGreen uppercase tracking-widest text-xs font-bold mb-6">
+                  {section.title}
+                </h4>
+                <ul className="space-y-3.5">
+                  {section.links.map((link) => (
+                    <li key={link.path}>
+                      <Link
+                        to={link.path}
+                        className="group inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-institutional-orange"
+                      >
+                        <span aria-hidden="true" className="text-institutional-lightGreen/60 transition-transform group-hover:translate-x-1">→</span>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </motion.nav>
+            ))}
           </div>
+        </div>
+
+        <div className="mb-10 flex flex-col gap-3 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-institutional-lightGreen">Contact direct</p>
+            <p className="mt-2 text-sm text-white/35">Brazzaville · Kinshasa · Paris</p>
+          </div>
+          <a href="mailto:co@mboma.org" className="text-base text-white/70 transition-colors hover:text-institutional-orange">
+            co@mboma.org
+          </a>
         </div>
         
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">

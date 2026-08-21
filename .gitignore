@@ -35,3 +35,4 @@ firebase-debug.log
 # Functions
 functions/lib
 functions/node_modules
+functions/.env

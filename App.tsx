@@ -14,15 +14,20 @@ type SeoEntry = {
   keywords?: string;
   image: string;
   imageAlt: string;
+  imageWidth?: number;
+  imageHeight?: number;
   type?: 'website' | 'article';
   robots?: string;
 };
+
+const BRAND_SHARE_IMAGE = '/mboma-share-2026.png';
+const BRAND_SHARE_ALT = 'Logo MboMa & Co. - Institution Panafricaine';
 
 const defaultSeo: SeoEntry = {
   title: 'Institution Panafricaine de Pilotage et Gouvernance',
   description: 'MboMa & Co. est une structure de pilotage et de gouvernance de projets complexes operant a l interface des nations et du futur. Nous ne faisons pas du bruit. Nous laissons une trace.',
   keywords: 'MboMa, Afrique, gouvernance, innovation, developpement, souverainete, technologie, panafricain, consulting',
-  image: '/logo-og.png',
+  image: BRAND_SHARE_IMAGE,
   imageAlt: 'MboMa & Co. - Institution Panafricaine',
   type: 'website',
   robots: 'index, follow'
@@ -36,7 +41,7 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Institution',
     description: 'Découvrez MboMa & Co., une institution panafricaine dédiée au pilotage stratégique et à la gouvernance de projets complexes en Afrique.',
     keywords: 'institution panafricaine, gouvernance, Afrique, pilotage strategique, MboMa',
-    image: '/og-image.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Page Institution - MboMa & Co.',
     type: 'website',
     robots: 'index, follow'
@@ -45,7 +50,7 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Vision & Valeurs',
     description: 'Notre vision : bâtir une Afrique souveraine par l\'innovation et la gouvernance. Découvrez les valeurs qui guident MboMa & Co.',
     keywords: 'vision, valeurs, Afrique souveraine, innovation africaine, MboMa',
-    image: '/og-image.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Page Vision & Valeurs - MboMa & Co.',
     type: 'website',
     robots: 'index, follow'
@@ -54,7 +59,7 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Expertises',
     description: 'Nos domaines d\'expertise : transformation digitale, gouvernance institutionnelle, innovation technologique et développement durable en Afrique.',
     keywords: 'expertise, transformation digitale, gouvernance, innovation, technologie, Afrique, MboMa',
-    image: '/og-image.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Page Expertises - MboMa & Co.',
     type: 'website',
     robots: 'index, follow'
@@ -63,7 +68,7 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Architecture',
     description: 'L\'architecture organisationnelle de MboMa & Co. : une structure agile et innovante au service de l\'excellence africaine.',
     keywords: 'architecture, organisation, structure, MboMa, Afrique',
-    image: '/og-image.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Page Architecture - MboMa & Co.',
     type: 'website',
     robots: 'index, follow'
@@ -72,7 +77,7 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Rapports Annuels',
     description: 'Consultez nos rapports annuels et découvrez l\'impact de MboMa & Co. sur le développement et l\'innovation en Afrique.',
     keywords: 'rapports annuels, impact, developpement, Afrique, MboMa, resultats',
-    image: '/og-image.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Rapports annuels - MboMa & Co.',
     type: 'website',
     robots: 'index, follow'
@@ -81,7 +86,7 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Réservation d\'Audit Gratuit',
     description: 'Réservez votre audit gratuit avec MboMa & Co. Audit de conformité RGPD, sécurité numérique et infrastructure cloud pour votre entreprise.',
     keywords: 'audit gratuit, RGPD, securite numerique, cloud, conformite, MboMa',
-    image: '/og-image.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Reservation d audit - MboMa & Co.',
     type: 'website',
     robots: 'index, follow'
@@ -90,16 +95,81 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Masterclass Dormez & Gagnez',
     description: 'Inscrivez-vous à notre masterclass exclusive "Dormez & Gagnez" - L\'art de l\'automatisation totale. 19-21 Février 2026 à Kinshasa.',
     keywords: 'masterclass, formation, automatisation, revenus passifs, Kinshasa, MboMa, Dormez et Gagnez',
-    image: '/masterclass-og.jpeg',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Affiche officielle Masterclass Dormez & Gagnez',
     type: 'article',
+    robots: 'index, follow'
+  },
+  '/technology-partnership-program': {
+    title: 'Technology Partnership Program',
+    description: 'Investisseurs, entreprises et organisations : co-créez avec MboMa & Co. des solutions technologiques impactantes et durables.',
+    keywords: 'partenariat technologique, co-développement, investissement, innovation, entreprise, Afrique, MboMa',
+    image: BRAND_SHARE_IMAGE,
+    imageAlt: 'Affiche officielle du Technology Partnership Program de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/audit-technologique': {
+    title: 'Audit Technologique',
+    description: 'Évaluez, sécurisez et optimisez votre infrastructure, réseau, cloud, cybersécurité, systèmes et applications avec MboMa & Co.',
+    keywords: 'audit technologique, infrastructure informatique, réseau, cloud, cybersécurité, systèmes, applications, MboMa',
+    image: BRAND_SHARE_IMAGE,
+    imageAlt: 'Affiche officielle de la campagne Audit technologique de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/digitalisez-votre-entreprise': {
+    title: 'Digitalisez votre entreprise',
+    description: 'Centralisez vos opérations dans un système conçu pour votre entreprise avec l’accompagnement technologique de MboMa & Co.',
+    keywords: 'digitalisation entreprise, transformation numérique, logiciel sur mesure, centralisation opérations, tableau de bord, MboMa',
+    image: BRAND_SHARE_IMAGE,
+    imageAlt: 'Affiche officielle de la campagne Digitalisez votre entreprise de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/idee-application': {
+    title: 'Vous avez une idée d’application ?',
+    description: 'MboMa & Co. transforme votre idée d’application en produit technologique fonctionnel, de la conception au lancement.',
+    keywords: 'création application, développement mobile, application web, produit technologique, prototype, startup, MboMa',
+    image: BRAND_SHARE_IMAGE,
+    imageAlt: 'Affiche officielle Vous avez une idée d’application de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/automatisez-vos-taches-avec-ia': {
+    title: 'Automatisez vos tâches avec l’IA',
+    description: 'Gagnez du temps, améliorez la productivité et automatisez vos opérations avec des solutions d’intelligence artificielle conçues par MboMa & Co.',
+    keywords: 'automatisation IA, intelligence artificielle entreprise, automatiser tâches, productivité, processus métier, MboMa',
+    image: BRAND_SHARE_IMAGE,
+    imageAlt: 'Affiche officielle Automatisez vos tâches avec l’IA de MboMa & Co.',
+    type: 'website',
+    robots: 'index, follow'
+  },
+  '/articles/espionnage-camera-micro-telephone': {
+    title: 'Peut-on être espionné par la caméra ou le micro de son téléphone ?',
+    description: 'Caméra, microphone, applications malveillantes, spywares et Pegasus : comprendre les risques réels de surveillance mobile et protéger son smartphone.',
+    keywords: 'espionnage téléphone, caméra téléphone, microphone téléphone, cybersécurité mobile, spyware, Pegasus, vie privée smartphone, sécurité Android, sécurité iPhone',
+    image: '/articleimage.png',
+    imageAlt: 'Étude MboMa & Co. sur l’espionnage par la caméra ou le microphone d’un téléphone',
+    imageWidth: 1146,
+    imageHeight: 1148,
+    type: 'article',
+    robots: 'index, follow'
+  },
+  '/contexxecloud': {
+    title: 'Contexxe Cloud — Offre entreprise',
+    description: 'Sauvegarde, archivage intelligent, OCR, recherche avancée et sécurité dans une plateforme Contexxe Cloud dimensionnée pour votre organisation.',
+    keywords: 'Contexxe Cloud, stockage entreprise, archivage numérique, OCR, recherche documentaire, sauvegarde cloud, sécurité des données, Afrique',
+    image: BRAND_SHARE_IMAGE,
+    imageAlt: 'Contexxe Cloud — La mémoire numérique sécurisée et intelligente',
+    type: 'website',
     robots: 'index, follow'
   },
   '/moni_offer': {
     title: 'Offre Moni.IO - Opportunite d acquisition',
     description: 'Super-app Fintech Moni.IO en vente: paiement, encaissement et transfert via email, telephone, QR code ou numero Moni, retrait Mobile Money en Afrique centrale, achat credit & forfait. Application finalisee a 100 % et prete a la commercialisation.',
     keywords: 'moni.io, moni offer, acquisition fintech, app fintech en vente, mobile money afrique centrale, paiement qr code, transfert argent',
-    image: '/moni-offer-og.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Affiche officielle de l offre Moni.IO',
     type: 'article',
     robots: 'index, follow'
@@ -108,7 +178,7 @@ const seoData: Record<string, SeoEntry> = {
     title: 'Vérification d\'Inscription',
     description: 'Vérifiez votre inscription à la masterclass MboMa & Co. avec votre numéro de référence.',
     keywords: 'verification, inscription, masterclass, MboMa',
-    image: '/og-image.png',
+    image: BRAND_SHARE_IMAGE,
     imageAlt: 'Verification inscription masterclass',
     type: 'website',
     robots: 'noindex, nofollow'
@@ -127,6 +197,21 @@ const normalizePath = (pathname: string): string => {
   }
   if (noTrailingSlash === '/moni-offer') {
     return '/moni_offer';
+  }
+  if (noTrailingSlash === '/partnership') {
+    return '/technology-partnership-program';
+  }
+  if (noTrailingSlash === '/technology-audit') {
+    return '/audit-technologique';
+  }
+  if (noTrailingSlash === '/digitalisation-entreprise') {
+    return '/digitalisez-votre-entreprise';
+  }
+  if (noTrailingSlash === '/app-idea') {
+    return '/idee-application';
+  }
+  if (noTrailingSlash === '/automatisation-ia') {
+    return '/automatisez-vos-taches-avec-ia';
   }
 
   return noTrailingSlash;
@@ -170,9 +255,11 @@ const DynamicSEO = () => {
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={currentSEO.description} />
       <meta property="og:image" content={imageUrl} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={currentSEO.imageAlt} />
+      <meta property="og:image:secure_url" content={imageUrl} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content={String(currentSEO.imageWidth || 1200)} />
+      <meta property="og:image:height" content={String(currentSEO.imageHeight || 630)} />
+      <meta property="og:image:alt" content={currentSEO.imageAlt || BRAND_SHARE_ALT} />
       <meta property="og:site_name" content="MboMa & Co." />
       <meta property="og:locale" content="fr_FR" />
       
@@ -182,7 +269,7 @@ const DynamicSEO = () => {
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={currentSEO.description} />
       <meta name="twitter:image" content={imageUrl} />
-      <meta name="twitter:image:alt" content={currentSEO.imageAlt} />
+      <meta name="twitter:image:alt" content={currentSEO.imageAlt || BRAND_SHARE_ALT} />
       
       {/* Canonical */}
       <link rel="canonical" href={canonicalUrl} />
