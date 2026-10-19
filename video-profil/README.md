@@ -3,8 +3,17 @@
 Vidéo motion design 1920×1080, 30 i/s, durée exacte **1 min 50 s**, en français, voix off duo Canal+ (homme / femme, ElevenLabs).
 
 Fichiers :
-- `MboMa-Co_Profil_Institutionnel_1m50.mp4` : version 16:9 (1920×1080) pour site, YouTube, LinkedIn et présentations
-- `MboMa-Co_Profil_Institutionnel_1m50_Mobile_9x16.mp4` : version verticale 9:16 (1080×1920) pour TikTok, Instagram Reels, YouTube Shorts, statut WhatsApp. Même voix, même musique et même timing, mais chaque scène est remise en page pour l'écran vertical, avec les textes clés entre 250 px et 1700 px de hauteur, hors des zones masquées par les interfaces des applications.
+- `public/videos/mboma-profil-16x9.mp4` : version 16:9 (1920×1080) pour site, YouTube, LinkedIn et présentations
+- `public/videos/mboma-profil-9x16.mp4` : version verticale 9:16 (1080×1920) pour TikTok, Instagram Reels, YouTube Shorts, statut WhatsApp. Même voix, même musique et même timing, mais chaque scène est remise en page pour l'écran vertical, avec les textes clés entre 250 px et 1700 px de hauteur, hors des zones masquées par les interfaces des applications.
+
+## Intégration sur le site
+
+Composant `components/ProfileVideo.tsx` : la version verticale est servie sur téléphone (largeur < 768 px), la version 16:9 sur tablette et ordinateur.
+
+- **Accueil, bannière** : le film tourne en boucle, sans le son, sous le menu, avec les boutons « Activer le son » (relance le film depuis le début avec la voix) et « Regarder en plein écran ».
+- **Accueil, section « Film institutionnel »** (`#film`) : lecteur avec le son, juste avant le rapport annuel.
+- **Page Institution** : lecteur sous le profil institutionnel.
+- Les visiteurs qui ont activé « réduire les animations » ou l'économiseur de données voient l'image fixe (`poster-*.jpg`) au lieu de la boucle.
 
 ## Déroulé
 
