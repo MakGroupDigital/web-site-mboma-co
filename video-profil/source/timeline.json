@@ -1,0 +1,1601 @@
+{
+ "total": 110.0,
+ "fps": 30,
+ "segments": [
+  {
+   "id": "intro",
+   "voice": "M",
+   "start": 1.258,
+   "end": 8.046
+  },
+  {
+   "id": "institution",
+   "voice": "F",
+   "start": 8.635,
+   "end": 16.808
+  },
+  {
+   "id": "partenaire",
+   "voice": "M",
+   "start": 17.378,
+   "end": 27.897
+  },
+  {
+   "id": "expertises",
+   "voice": "F",
+   "start": 28.466,
+   "end": 40.793
+  },
+  {
+   "id": "methode",
+   "voice": "M",
+   "start": 41.362,
+   "end": 54.497
+  },
+  {
+   "id": "terrain",
+   "voice": "F",
+   "start": 55.066,
+   "end": 73.489
+  },
+  {
+   "id": "impact",
+   "voice": "M",
+   "start": 74.058,
+   "end": 86.847
+  },
+  {
+   "id": "valeurs",
+   "voice": "F",
+   "start": 87.416,
+   "end": 97.685
+  },
+  {
+   "id": "logo",
+   "voice": "M",
+   "start": 98.655,
+   "end": 102.116
+  },
+  {
+   "id": "trace",
+   "voice": "F",
+   "start": 102.835,
+   "end": 105.451
+  }
+ ],
+ "scenes": [
+  {
+   "id": "intro",
+   "start": 0.0,
+   "end": 8.285
+  },
+  {
+   "id": "institution",
+   "start": 8.285,
+   "end": 17.028
+  },
+  {
+   "id": "partenaire",
+   "start": 17.028,
+   "end": 28.116
+  },
+  {
+   "id": "expertises",
+   "start": 28.116,
+   "end": 41.012
+  },
+  {
+   "id": "methode",
+   "start": 41.012,
+   "end": 54.716
+  },
+  {
+   "id": "terrain",
+   "start": 54.716,
+   "end": 73.708
+  },
+  {
+   "id": "impact",
+   "start": 73.708,
+   "end": 87.066
+  },
+  {
+   "id": "valeurs",
+   "start": 87.066,
+   "end": 98.305
+  },
+  {
+   "id": "logo",
+   "start": 98.305,
+   "end": 102.485
+  },
+  {
+   "id": "trace",
+   "start": 102.485,
+   "end": 106.351
+  },
+  {
+   "id": "endcard",
+   "start": 106.351,
+   "end": 110.0
+  }
+ ],
+ "words": [
+  {
+   "seg": "intro",
+   "text": "Dans",
+   "start": 1.258,
+   "end": 1.412
+  },
+  {
+   "seg": "intro",
+   "text": "un",
+   "start": 1.45,
+   "end": 1.527
+  },
+  {
+   "seg": "intro",
+   "text": "monde",
+   "start": 1.565,
+   "end": 1.758
+  },
+  {
+   "seg": "intro",
+   "text": "qui",
+   "start": 1.777,
+   "end": 1.892
+  },
+  {
+   "seg": "intro",
+   "text": "s'accélère,",
+   "start": 1.912,
+   "end": 2.469
+  },
+  {
+   "seg": "intro",
+   "text": "l'Afrique",
+   "start": 2.892,
+   "end": 3.277
+  },
+  {
+   "seg": "intro",
+   "text": "n'a",
+   "start": 3.315,
+   "end": 3.392
+  },
+  {
+   "seg": "intro",
+   "text": "plus",
+   "start": 3.546,
+   "end": 3.681
+  },
+  {
+   "seg": "intro",
+   "text": "le",
+   "start": 3.738,
+   "end": 3.835
+  },
+  {
+   "seg": "intro",
+   "text": "temps",
+   "start": 3.873,
+   "end": 3.969
+  },
+  {
+   "seg": "intro",
+   "text": "d'attendre.",
+   "start": 3.988,
+   "end": 4.45
+  },
+  {
+   "seg": "intro",
+   "text": "Elle",
+   "start": 4.873,
+   "end": 4.95
+  },
+  {
+   "seg": "intro",
+   "text": "a",
+   "start": 4.969,
+   "end": 5.027
+  },
+  {
+   "seg": "intro",
+   "text": "besoin",
+   "start": 5.065,
+   "end": 5.296
+  },
+  {
+   "seg": "intro",
+   "text": "de",
+   "start": 5.335,
+   "end": 5.431
+  },
+  {
+   "seg": "intro",
+   "text": "structure,",
+   "start": 5.488,
+   "end": 6.027
+  },
+  {
+   "seg": "intro",
+   "text": "de",
+   "start": 6.488,
+   "end": 6.546
+  },
+  {
+   "seg": "intro",
+   "text": "vision",
+   "start": 6.642,
+   "end": 7.027
+  },
+  {
+   "seg": "intro",
+   "text": "et",
+   "start": 7.45,
+   "end": 7.508
+  },
+  {
+   "seg": "intro",
+   "text": "d'impact.",
+   "start": 7.546,
+   "end": 8.046
+  },
+  {
+   "seg": "institution",
+   "text": "Mboma",
+   "start": 8.635,
+   "end": 8.982
+  },
+  {
+   "seg": "institution",
+   "text": "&",
+   "start": 9.039,
+   "end": 9.116
+  },
+  {
+   "seg": "institution",
+   "text": "Co.",
+   "start": 9.212,
+   "end": 9.366
+  },
+  {
+   "seg": "institution",
+   "text": "est",
+   "start": 9.578,
+   "end": 9.693
+  },
+  {
+   "seg": "institution",
+   "text": "une",
+   "start": 9.712,
+   "end": 9.808
+  },
+  {
+   "seg": "institution",
+   "text": "institution",
+   "start": 9.847,
+   "end": 10.405
+  },
+  {
+   "seg": "institution",
+   "text": "panafricaine",
+   "start": 10.501,
+   "end": 11.116
+  },
+  {
+   "seg": "institution",
+   "text": "de",
+   "start": 11.155,
+   "end": 11.212
+  },
+  {
+   "seg": "institution",
+   "text": "pilotage",
+   "start": 11.308,
+   "end": 11.885
+  },
+  {
+   "seg": "institution",
+   "text": "et",
+   "start": 12.001,
+   "end": 12.078
+  },
+  {
+   "seg": "institution",
+   "text": "de",
+   "start": 12.116,
+   "end": 12.212
+  },
+  {
+   "seg": "institution",
+   "text": "gouvernance",
+   "start": 12.251,
+   "end": 12.77
+  },
+  {
+   "seg": "institution",
+   "text": "de",
+   "start": 12.808,
+   "end": 12.905
+  },
+  {
+   "seg": "institution",
+   "text": "projets",
+   "start": 12.924,
+   "end": 13.212
+  },
+  {
+   "seg": "institution",
+   "text": "complexes",
+   "start": 13.27,
+   "end": 13.77
+  },
+  {
+   "seg": "institution",
+   "text": "qui",
+   "start": 14.078,
+   "end": 14.155
+  },
+  {
+   "seg": "institution",
+   "text": "opère",
+   "start": 14.212,
+   "end": 14.482
+  },
+  {
+   "seg": "institution",
+   "text": "à",
+   "start": 14.52,
+   "end": 14.558
+  },
+  {
+   "seg": "institution",
+   "text": "l'interface",
+   "start": 14.597,
+   "end": 15.097
+  },
+  {
+   "seg": "institution",
+   "text": "des",
+   "start": 15.135,
+   "end": 15.212
+  },
+  {
+   "seg": "institution",
+   "text": "nations",
+   "start": 15.251,
+   "end": 15.674
+  },
+  {
+   "seg": "institution",
+   "text": "et",
+   "start": 16.058,
+   "end": 16.135
+  },
+  {
+   "seg": "institution",
+   "text": "du",
+   "start": 16.174,
+   "end": 16.232
+  },
+  {
+   "seg": "institution",
+   "text": "futur.",
+   "start": 16.327,
+   "end": 16.808
+  },
+  {
+   "seg": "partenaire",
+   "text": "Nous",
+   "start": 17.378,
+   "end": 17.435
+  },
+  {
+   "seg": "partenaire",
+   "text": "ne",
+   "start": 17.474,
+   "end": 17.532
+  },
+  {
+   "seg": "partenaire",
+   "text": "sommes",
+   "start": 17.57,
+   "end": 17.742
+  },
+  {
+   "seg": "partenaire",
+   "text": "pas",
+   "start": 17.782,
+   "end": 17.916
+  },
+  {
+   "seg": "partenaire",
+   "text": "un",
+   "start": 17.955,
+   "end": 18.032
+  },
+  {
+   "seg": "partenaire",
+   "text": "cabinet",
+   "start": 18.051,
+   "end": 18.339
+  },
+  {
+   "seg": "partenaire",
+   "text": "de",
+   "start": 18.378,
+   "end": 18.474
+  },
+  {
+   "seg": "partenaire",
+   "text": "conseil",
+   "start": 18.512,
+   "end": 18.82
+  },
+  {
+   "seg": "partenaire",
+   "text": "traditionnel.",
+   "start": 18.839,
+   "end": 19.474
+  },
+  {
+   "seg": "partenaire",
+   "text": "Nous",
+   "start": 19.935,
+   "end": 20.051
+  },
+  {
+   "seg": "partenaire",
+   "text": "sommes",
+   "start": 20.089,
+   "end": 20.301
+  },
+  {
+   "seg": "partenaire",
+   "text": "un",
+   "start": 20.339,
+   "end": 20.435
+  },
+  {
+   "seg": "partenaire",
+   "text": "partenaire",
+   "start": 20.455,
+   "end": 20.974
+  },
+  {
+   "seg": "partenaire",
+   "text": "institutionnel",
+   "start": 21.032,
+   "end": 21.762
+  },
+  {
+   "seg": "partenaire",
+   "text": "de",
+   "start": 21.801,
+   "end": 21.878
+  },
+  {
+   "seg": "partenaire",
+   "text": "long",
+   "start": 21.935,
+   "end": 22.032
+  },
+  {
+   "seg": "partenaire",
+   "text": "terme",
+   "start": 22.128,
+   "end": 22.435
+  },
+  {
+   "seg": "partenaire",
+   "text": "qui",
+   "start": 22.782,
+   "end": 22.858
+  },
+  {
+   "seg": "partenaire",
+   "text": "assure",
+   "start": 22.916,
+   "end": 23.166
+  },
+  {
+   "seg": "partenaire",
+   "text": "la",
+   "start": 23.224,
+   "end": 23.32
+  },
+  {
+   "seg": "partenaire",
+   "text": "cohérence",
+   "start": 23.358,
+   "end": 23.839
+  },
+  {
+   "seg": "partenaire",
+   "text": "entre",
+   "start": 23.974,
+   "end": 24.166
+  },
+  {
+   "seg": "partenaire",
+   "text": "la",
+   "start": 24.205,
+   "end": 24.32
+  },
+  {
+   "seg": "partenaire",
+   "text": "vision",
+   "start": 24.358,
+   "end": 24.628
+  },
+  {
+   "seg": "partenaire",
+   "text": "politique,",
+   "start": 24.647,
+   "end": 25.128
+  },
+  {
+   "seg": "partenaire",
+   "text": "la",
+   "start": 25.435,
+   "end": 25.493
+  },
+  {
+   "seg": "partenaire",
+   "text": "structure",
+   "start": 25.55,
+   "end": 25.935
+  },
+  {
+   "seg": "partenaire",
+   "text": "financière",
+   "start": 25.974,
+   "end": 26.532
+  },
+  {
+   "seg": "partenaire",
+   "text": "et",
+   "start": 26.801,
+   "end": 26.858
+  },
+  {
+   "seg": "partenaire",
+   "text": "le",
+   "start": 26.897,
+   "end": 26.955
+  },
+  {
+   "seg": "partenaire",
+   "text": "déploiement",
+   "start": 27.032,
+   "end": 27.416
+  },
+  {
+   "seg": "partenaire",
+   "text": "technique.",
+   "start": 27.474,
+   "end": 27.897
+  },
+  {
+   "seg": "expertises",
+   "text": "Nos",
+   "start": 28.466,
+   "end": 28.601
+  },
+  {
+   "seg": "expertises",
+   "text": "expertises",
+   "start": 28.639,
+   "end": 29.293
+  },
+  {
+   "seg": "expertises",
+   "text": ":",
+   "start": 29.735,
+   "end": 29.735
+  },
+  {
+   "seg": "expertises",
+   "text": "la",
+   "start": 29.793,
+   "end": 29.851
+  },
+  {
+   "seg": "expertises",
+   "text": "transformation",
+   "start": 29.908,
+   "end": 30.543
+  },
+  {
+   "seg": "expertises",
+   "text": "numérique",
+   "start": 30.601,
+   "end": 30.985
+  },
+  {
+   "seg": "expertises",
+   "text": "des",
+   "start": 31.024,
+   "end": 31.158
+  },
+  {
+   "seg": "expertises",
+   "text": "institutions,",
+   "start": 31.197,
+   "end": 31.832
+  },
+  {
+   "seg": "expertises",
+   "text": "la",
+   "start": 32.197,
+   "end": 32.255
+  },
+  {
+   "seg": "expertises",
+   "text": "structuration",
+   "start": 32.351,
+   "end": 32.966
+  },
+  {
+   "seg": "expertises",
+   "text": "d'écosystèmes",
+   "start": 33.043,
+   "end": 33.678
+  },
+  {
+   "seg": "expertises",
+   "text": "d'innovation,",
+   "start": 33.716,
+   "end": 34.332
+  },
+  {
+   "seg": "expertises",
+   "text": "la",
+   "start": 34.735,
+   "end": 34.774
+  },
+  {
+   "seg": "expertises",
+   "text": "gouvernance",
+   "start": 34.87,
+   "end": 35.293
+  },
+  {
+   "seg": "expertises",
+   "text": "de",
+   "start": 35.332,
+   "end": 35.369
+  },
+  {
+   "seg": "expertises",
+   "text": "programmes,",
+   "start": 35.447,
+   "end": 35.889
+  },
+  {
+   "seg": "expertises",
+   "text": "le",
+   "start": 36.255,
+   "end": 36.312
+  },
+  {
+   "seg": "expertises",
+   "text": "traitement",
+   "start": 36.389,
+   "end": 36.812
+  },
+  {
+   "seg": "expertises",
+   "text": "et",
+   "start": 36.908,
+   "end": 36.966
+  },
+  {
+   "seg": "expertises",
+   "text": "la",
+   "start": 37.005,
+   "end": 37.062
+  },
+  {
+   "seg": "expertises",
+   "text": "valorisation",
+   "start": 37.139,
+   "end": 37.755
+  },
+  {
+   "seg": "expertises",
+   "text": "des",
+   "start": 37.793,
+   "end": 37.87
+  },
+  {
+   "seg": "expertises",
+   "text": "données",
+   "start": 37.908,
+   "end": 38.197
+  },
+  {
+   "seg": "expertises",
+   "text": "jusqu'à",
+   "start": 38.601,
+   "end": 38.889
+  },
+  {
+   "seg": "expertises",
+   "text": "la",
+   "start": 38.928,
+   "end": 39.062
+  },
+  {
+   "seg": "expertises",
+   "text": "tokenisation",
+   "start": 39.101,
+   "end": 39.87
+  },
+  {
+   "seg": "expertises",
+   "text": "et",
+   "start": 40.043,
+   "end": 40.101
+  },
+  {
+   "seg": "expertises",
+   "text": "la",
+   "start": 40.139,
+   "end": 40.197
+  },
+  {
+   "seg": "expertises",
+   "text": "blockchain.",
+   "start": 40.255,
+   "end": 40.793
+  },
+  {
+   "seg": "methode",
+   "text": "Notre",
+   "start": 41.362,
+   "end": 41.574
+  },
+  {
+   "seg": "methode",
+   "text": "méthode",
+   "start": 41.612,
+   "end": 41.901
+  },
+  {
+   "seg": "methode",
+   "text": "est",
+   "start": 41.997,
+   "end": 42.093
+  },
+  {
+   "seg": "methode",
+   "text": "claire",
+   "start": 42.132,
+   "end": 42.497
+  },
+  {
+   "seg": "methode",
+   "text": ":",
+   "start": 42.497,
+   "end": 42.497
+  },
+  {
+   "seg": "methode",
+   "text": "comprendre",
+   "start": 42.958,
+   "end": 43.401
+  },
+  {
+   "seg": "methode",
+   "text": "le",
+   "start": 43.439,
+   "end": 43.478
+  },
+  {
+   "seg": "methode",
+   "text": "terrain,",
+   "start": 43.555,
+   "end": 43.862
+  },
+  {
+   "seg": "methode",
+   "text": "auditer,",
+   "start": 44.305,
+   "end": 44.747
+  },
+  {
+   "seg": "methode",
+   "text": "concevoir",
+   "start": 45.189,
+   "end": 45.632
+  },
+  {
+   "seg": "methode",
+   "text": "le",
+   "start": 45.67,
+   "end": 45.728
+  },
+  {
+   "seg": "methode",
+   "text": "cadre,",
+   "start": 45.824,
+   "end": 46.093
+  },
+  {
+   "seg": "methode",
+   "text": "puis",
+   "start": 46.458,
+   "end": 46.632
+  },
+  {
+   "seg": "methode",
+   "text": "déployer.",
+   "start": 46.882,
+   "end": 47.401
+  },
+  {
+   "seg": "methode",
+   "text": "Mboma",
+   "start": 48.074,
+   "end": 48.362
+  },
+  {
+   "seg": "methode",
+   "text": "&",
+   "start": 48.497,
+   "end": 48.574
+  },
+  {
+   "seg": "methode",
+   "text": "Co",
+   "start": 48.651,
+   "end": 48.805
+  },
+  {
+   "seg": "methode",
+   "text": "structure",
+   "start": 49.016,
+   "end": 49.497
+  },
+  {
+   "seg": "methode",
+   "text": "et",
+   "start": 49.651,
+   "end": 49.708
+  },
+  {
+   "seg": "methode",
+   "text": "dirige.",
+   "start": 49.766,
+   "end": 50.17
+  },
+  {
+   "seg": "methode",
+   "text": "Notre",
+   "start": 50.651,
+   "end": 50.862
+  },
+  {
+   "seg": "methode",
+   "text": "laboratoire,",
+   "start": 50.901,
+   "end": 51.535
+  },
+  {
+   "seg": "methode",
+   "text": "YBS",
+   "start": 51.843,
+   "end": 52.458
+  },
+  {
+   "seg": "methode",
+   "text": "Innovate,",
+   "start": 52.574,
+   "end": 53.055
+  },
+  {
+   "seg": "methode",
+   "text": "conçoit",
+   "start": 53.382,
+   "end": 53.784
+  },
+  {
+   "seg": "methode",
+   "text": "et",
+   "start": 53.939,
+   "end": 53.997
+  },
+  {
+   "seg": "methode",
+   "text": "fabrique.",
+   "start": 54.074,
+   "end": 54.497
+  },
+  {
+   "seg": "terrain",
+   "text": "Sur",
+   "start": 55.066,
+   "end": 55.182
+  },
+  {
+   "seg": "terrain",
+   "text": "le",
+   "start": 55.22,
+   "end": 55.278
+  },
+  {
+   "seg": "terrain",
+   "text": "terrain,",
+   "start": 55.335,
+   "end": 55.624
+  },
+  {
+   "seg": "terrain",
+   "text": "nous",
+   "start": 55.932,
+   "end": 56.047
+  },
+  {
+   "seg": "terrain",
+   "text": "accompagnons",
+   "start": 56.105,
+   "end": 56.605
+  },
+  {
+   "seg": "terrain",
+   "text": "les",
+   "start": 56.643,
+   "end": 56.797
+  },
+  {
+   "seg": "terrain",
+   "text": "États",
+   "start": 56.855,
+   "end": 57.22
+  },
+  {
+   "seg": "terrain",
+   "text": "et",
+   "start": 57.258,
+   "end": 57.316
+  },
+  {
+   "seg": "terrain",
+   "text": "les",
+   "start": 57.355,
+   "end": 57.47
+  },
+  {
+   "seg": "terrain",
+   "text": "entreprises.",
+   "start": 57.508,
+   "end": 58.143
+  },
+  {
+   "seg": "terrain",
+   "text": "Systèmes",
+   "start": 58.566,
+   "end": 58.951
+  },
+  {
+   "seg": "terrain",
+   "text": "d'identification",
+   "start": 58.989,
+   "end": 59.739
+  },
+  {
+   "seg": "terrain",
+   "text": "sécurisés,",
+   "start": 59.816,
+   "end": 60.374
+  },
+  {
+   "seg": "terrain",
+   "text": "super",
+   "start": 60.797,
+   "end": 61.047
+  },
+  {
+   "seg": "terrain",
+   "text": "applications",
+   "start": 61.085,
+   "end": 61.624
+  },
+  {
+   "seg": "terrain",
+   "text": "de",
+   "start": 61.662,
+   "end": 61.739
+  },
+  {
+   "seg": "terrain",
+   "text": "gestion",
+   "start": 61.797,
+   "end": 62.105
+  },
+  {
+   "seg": "terrain",
+   "text": "de",
+   "start": 62.143,
+   "end": 62.201
+  },
+  {
+   "seg": "terrain",
+   "text": "chantiers,",
+   "start": 62.258,
+   "end": 62.643
+  },
+  {
+   "seg": "terrain",
+   "text": "digitalisation",
+   "start": 63.047,
+   "end": 63.797
+  },
+  {
+   "seg": "terrain",
+   "text": "de",
+   "start": 63.835,
+   "end": 63.893
+  },
+  {
+   "seg": "terrain",
+   "text": "plateformes",
+   "start": 63.97,
+   "end": 64.451
+  },
+  {
+   "seg": "terrain",
+   "text": "pour",
+   "start": 64.488,
+   "end": 64.566
+  },
+  {
+   "seg": "terrain",
+   "text": "la",
+   "start": 64.605,
+   "end": 64.661
+  },
+  {
+   "seg": "terrain",
+   "text": "diaspora,",
+   "start": 64.72,
+   "end": 65.22
+  },
+  {
+   "seg": "terrain",
+   "text": "vidéosurveillance",
+   "start": 65.643,
+   "end": 66.547
+  },
+  {
+   "seg": "terrain",
+   "text": "assistée",
+   "start": 66.701,
+   "end": 67.124
+  },
+  {
+   "seg": "terrain",
+   "text": "par",
+   "start": 67.162,
+   "end": 67.278
+  },
+  {
+   "seg": "terrain",
+   "text": "l'IA",
+   "start": 67.316,
+   "end": 67.585
+  },
+  {
+   "seg": "terrain",
+   "text": "et",
+   "start": 67.97,
+   "end": 68.047
+  },
+  {
+   "seg": "terrain",
+   "text": "Clara",
+   "start": 68.162,
+   "end": 68.47
+  },
+  {
+   "seg": "terrain",
+   "text": "AI,",
+   "start": 68.624,
+   "end": 69.028
+  },
+  {
+   "seg": "terrain",
+   "text": "notre",
+   "start": 69.316,
+   "end": 69.489
+  },
+  {
+   "seg": "terrain",
+   "text": "intelligence",
+   "start": 69.528,
+   "end": 70.028
+  },
+  {
+   "seg": "terrain",
+   "text": "artificielle",
+   "start": 70.085,
+   "end": 70.739
+  },
+  {
+   "seg": "terrain",
+   "text": "capable",
+   "start": 70.855,
+   "end": 71.239
+  },
+  {
+   "seg": "terrain",
+   "text": "d'analyser",
+   "start": 71.258,
+   "end": 71.893
+  },
+  {
+   "seg": "terrain",
+   "text": "un",
+   "start": 71.97,
+   "end": 72.066
+  },
+  {
+   "seg": "terrain",
+   "text": "million",
+   "start": 72.105,
+   "end": 72.432
+  },
+  {
+   "seg": "terrain",
+   "text": "de",
+   "start": 72.47,
+   "end": 72.585
+  },
+  {
+   "seg": "terrain",
+   "text": "CV",
+   "start": 72.624,
+   "end": 72.893
+  },
+  {
+   "seg": "terrain",
+   "text": "par",
+   "start": 72.932,
+   "end": 73.028
+  },
+  {
+   "seg": "terrain",
+   "text": "minute.",
+   "start": 73.085,
+   "end": 73.489
+  },
+  {
+   "seg": "impact",
+   "text": "En",
+   "start": 74.058,
+   "end": 74.135
+  },
+  {
+   "seg": "impact",
+   "text": "2025",
+   "start": 74.289,
+   "end": 75.001
+  },
+  {
+   "seg": "impact",
+   "text": ":",
+   "start": 75.02,
+   "end": 75.02
+  },
+  {
+   "seg": "impact",
+   "text": "vingt-six",
+   "start": 75.462,
+   "end": 75.828
+  },
+  {
+   "seg": "impact",
+   "text": "projets",
+   "start": 75.866,
+   "end": 76.155
+  },
+  {
+   "seg": "impact",
+   "text": "structurants,",
+   "start": 76.232,
+   "end": 76.77
+  },
+  {
+   "seg": "impact",
+   "text": "douze",
+   "start": 77.251,
+   "end": 77.443
+  },
+  {
+   "seg": "impact",
+   "text": "pays",
+   "start": 77.52,
+   "end": 77.751
+  },
+  {
+   "seg": "impact",
+   "text": "partenaires,",
+   "start": 77.789,
+   "end": 78.347
+  },
+  {
+   "seg": "impact",
+   "text": "plus",
+   "start": 78.751,
+   "end": 78.885
+  },
+  {
+   "seg": "impact",
+   "text": "de",
+   "start": 78.924,
+   "end": 79.078
+  },
+  {
+   "seg": "impact",
+   "text": "cent",
+   "start": 79.135,
+   "end": 79.251
+  },
+  {
+   "seg": "impact",
+   "text": "cinquante",
+   "start": 79.328,
+   "end": 79.655
+  },
+  {
+   "seg": "impact",
+   "text": "solutions",
+   "start": 79.712,
+   "end": 80.116
+  },
+  {
+   "seg": "impact",
+   "text": "technologiques,",
+   "start": 80.155,
+   "end": 80.789
+  },
+  {
+   "seg": "impact",
+   "text": "quatre-vingt-cinq",
+   "start": 81.193,
+   "end": 81.808
+  },
+  {
+   "seg": "impact",
+   "text": "pour",
+   "start": 81.828,
+   "end": 81.943
+  },
+  {
+   "seg": "impact",
+   "text": "cent",
+   "start": 82.02,
+   "end": 82.135
+  },
+  {
+   "seg": "impact",
+   "text": "d'expertises",
+   "start": 82.174,
+   "end": 82.693
+  },
+  {
+   "seg": "impact",
+   "text": "locales",
+   "start": 82.732,
+   "end": 83.135
+  },
+  {
+   "seg": "impact",
+   "text": "et",
+   "start": 83.558,
+   "end": 83.693
+  },
+  {
+   "seg": "impact",
+   "text": "quatre-vingt-dix",
+   "start": 83.732,
+   "end": 84.251
+  },
+  {
+   "seg": "impact",
+   "text": "pour",
+   "start": 84.27,
+   "end": 84.385
+  },
+  {
+   "seg": "impact",
+   "text": "cent",
+   "start": 84.443,
+   "end": 84.558
+  },
+  {
+   "seg": "impact",
+   "text": "de",
+   "start": 84.597,
+   "end": 84.655
+  },
+  {
+   "seg": "impact",
+   "text": "nos",
+   "start": 84.693,
+   "end": 84.808
+  },
+  {
+   "seg": "impact",
+   "text": "partenaires",
+   "start": 84.828,
+   "end": 85.443
+  },
+  {
+   "seg": "impact",
+   "text": "nous",
+   "start": 85.482,
+   "end": 85.597
+  },
+  {
+   "seg": "impact",
+   "text": "renouvellent",
+   "start": 85.655,
+   "end": 86.078
+  },
+  {
+   "seg": "impact",
+   "text": "leur",
+   "start": 86.116,
+   "end": 86.232
+  },
+  {
+   "seg": "impact",
+   "text": "confiance.",
+   "start": 86.308,
+   "end": 86.847
+  },
+  {
+   "seg": "valeurs",
+   "text": "Rigueur,",
+   "start": 87.416,
+   "end": 87.916
+  },
+  {
+   "seg": "valeurs",
+   "text": "intégrité,",
+   "start": 88.282,
+   "end": 88.897
+  },
+  {
+   "seg": "valeurs",
+   "text": "souveraineté",
+   "start": 89.397,
+   "end": 89.878
+  },
+  {
+   "seg": "valeurs",
+   "text": "africaine.",
+   "start": 89.935,
+   "end": 90.474
+  },
+  {
+   "seg": "valeurs",
+   "text": "Nous",
+   "start": 90.935,
+   "end": 91.051
+  },
+  {
+   "seg": "valeurs",
+   "text": "plaçons",
+   "start": 91.089,
+   "end": 91.397
+  },
+  {
+   "seg": "valeurs",
+   "text": "l'humain",
+   "start": 91.435,
+   "end": 91.858
+  },
+  {
+   "seg": "valeurs",
+   "text": "au",
+   "start": 91.897,
+   "end": 91.935
+  },
+  {
+   "seg": "valeurs",
+   "text": "cœur",
+   "start": 92.089,
+   "end": 92.282
+  },
+  {
+   "seg": "valeurs",
+   "text": "de",
+   "start": 92.339,
+   "end": 92.397
+  },
+  {
+   "seg": "valeurs",
+   "text": "la",
+   "start": 92.435,
+   "end": 92.512
+  },
+  {
+   "seg": "valeurs",
+   "text": "transformation",
+   "start": 92.532,
+   "end": 93.147
+  },
+  {
+   "seg": "valeurs",
+   "text": "numérique",
+   "start": 93.205,
+   "end": 93.666
+  },
+  {
+   "seg": "valeurs",
+   "text": "pour",
+   "start": 93.974,
+   "end": 94.07
+  },
+  {
+   "seg": "valeurs",
+   "text": "une",
+   "start": 94.108,
+   "end": 94.185
+  },
+  {
+   "seg": "valeurs",
+   "text": "Afrique",
+   "start": 94.224,
+   "end": 94.512
+  },
+  {
+   "seg": "valeurs",
+   "text": "structurée",
+   "start": 94.608,
+   "end": 95.243
+  },
+  {
+   "seg": "valeurs",
+   "text": "et",
+   "start": 95.282,
+   "end": 95.378
+  },
+  {
+   "seg": "valeurs",
+   "text": "compétitive",
+   "start": 95.435,
+   "end": 96.128
+  },
+  {
+   "seg": "valeurs",
+   "text": "à",
+   "start": 96.339,
+   "end": 96.378
+  },
+  {
+   "seg": "valeurs",
+   "text": "l'horizon",
+   "start": 96.397,
+   "end": 96.782
+  },
+  {
+   "seg": "valeurs",
+   "text": "2050.",
+   "start": 96.955,
+   "end": 97.685
+  },
+  {
+   "seg": "logo",
+   "text": "Mboma",
+   "start": 98.655,
+   "end": 99.02
+  },
+  {
+   "seg": "logo",
+   "text": "&",
+   "start": 99.174,
+   "end": 99.251
+  },
+  {
+   "seg": "logo",
+   "text": "Co.",
+   "start": 99.347,
+   "end": 99.539
+  },
+  {
+   "seg": "logo",
+   "text": "Élevez",
+   "start": 100.058,
+   "end": 100.308
+  },
+  {
+   "seg": "logo",
+   "text": "les",
+   "start": 100.328,
+   "end": 100.424
+  },
+  {
+   "seg": "logo",
+   "text": "standards,",
+   "start": 100.501,
+   "end": 100.962
+  },
+  {
+   "seg": "logo",
+   "text": "créez",
+   "start": 101.328,
+   "end": 101.578
+  },
+  {
+   "seg": "logo",
+   "text": "l'impact.",
+   "start": 101.597,
+   "end": 102.116
+  },
+  {
+   "seg": "trace",
+   "text": "Nous",
+   "start": 102.835,
+   "end": 102.912
+  },
+  {
+   "seg": "trace",
+   "text": "ne",
+   "start": 102.951,
+   "end": 103.008
+  },
+  {
+   "seg": "trace",
+   "text": "faisons",
+   "start": 103.105,
+   "end": 103.374
+  },
+  {
+   "seg": "trace",
+   "text": "pas",
+   "start": 103.412,
+   "end": 103.508
+  },
+  {
+   "seg": "trace",
+   "text": "du",
+   "start": 103.547,
+   "end": 103.662
+  },
+  {
+   "seg": "trace",
+   "text": "bruit,",
+   "start": 103.682,
+   "end": 103.893
+  },
+  {
+   "seg": "trace",
+   "text": "nous",
+   "start": 104.374,
+   "end": 104.47
+  },
+  {
+   "seg": "trace",
+   "text": "laissons",
+   "start": 104.528,
+   "end": 104.835
+  },
+  {
+   "seg": "trace",
+   "text": "une",
+   "start": 104.855,
+   "end": 104.989
+  },
+  {
+   "seg": "trace",
+   "text": "trace.",
+   "start": 105.028,
+   "end": 105.451
+  }
+ ]
+}

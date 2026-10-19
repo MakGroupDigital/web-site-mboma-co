@@ -36,6 +36,9 @@ const Header: React.FC = () => {
     { label: 'Rapports', path: '/rapports' },
   ];
 
+  // Over the homepage video banner the bar is transparent, so it switches to light text.
+  const overBanner = !scrolled && location.pathname === '/';
+
   const handleNavigation = (path: string) => {
     navigate(path);
     setMobileMenuOpen(false);
@@ -53,7 +56,7 @@ const Header: React.FC = () => {
             onClick={() => navigate('/')}
             className="hover:opacity-90 transition-opacity"
           >
-            <Logo variant="color" size="sm" />
+            <Logo variant={overBanner ? 'white' : 'color'} size="sm" />
           </button>
 
           <nav className="hidden lg:flex items-center gap-10">
@@ -62,7 +65,7 @@ const Header: React.FC = () => {
                 key={item.path}
                 onClick={() => handleNavigation(item.path)}
                 className={`relative font-sans text-xs uppercase tracking-[0.15em] font-bold transition-colors group py-2 ${
-                  location.pathname === item.path ? 'text-institutional-green' : 'text-institutional-grey hover:text-institutional-green'
+                  location.pathname === item.path ? 'text-institutional-green' : overBanner ? 'text-white/90 hover:text-white' : 'text-institutional-grey hover:text-institutional-green'
                 }`}
               >
                 {item.label}
@@ -80,7 +83,7 @@ const Header: React.FC = () => {
           <div className="flex items-center gap-6">
             <a 
               href="mailto:co@mboma.org" 
-              className="hidden md:block border border-institutional-green px-6 py-2 text-xs uppercase tracking-widest font-bold text-institutional-green hover:bg-institutional-green hover:text-white transition-all transform hover:scale-105 active:scale-95"
+              className={`hidden md:block border px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-institutional-green hover:border-institutional-green hover:text-white transition-all transform hover:scale-105 active:scale-95 ${overBanner ? 'border-white/70 text-white' : 'border-institutional-green text-institutional-green'}`}
             >
               Nous Contacter
             </a>
@@ -104,7 +107,7 @@ const Header: React.FC = () => {
                 e.stopPropagation();
                 setMobileMenuOpen(!mobileMenuOpen);
               }}
-              className="lg:hidden text-institutional-grey hover:text-institutional-green transition-colors relative z-60"
+              className={`lg:hidden hover:text-institutional-green transition-colors relative z-60 ${overBanner ? 'text-white' : 'text-institutional-grey'}`}
             >
               <motion.div
                 animate={mobileMenuOpen ? { rotate: 180 } : { rotate: 0 }}
@@ -158,7 +161,7 @@ const Header: React.FC = () => {
                     transition={{ delay: i * 0.1 }}
                     onClick={() => handleNavigation(item.path)}
                     className={`block w-full text-left font-sans text-lg font-bold transition-colors py-3 border-b border-gray-100 ${
-                      location.pathname === item.path ? 'text-institutional-green' : 'text-institutional-grey hover:text-institutional-green'
+                      location.pathname === item.path ? 'text-institutional-green' : overBanner ? 'text-white/90 hover:text-white' : 'text-institutional-grey hover:text-institutional-green'
                     }`}
                   >
                     {item.label}

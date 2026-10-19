@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MboMa & Co. — Profil</title>
+<style>
+@font-face{font-family:Anton;src:url(node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2)}
+@font-face{font-family:Anton;src:url(node_modules/@fontsource/anton/files/anton-latin-ext-400-normal.woff2);unicode-range:U+0100-024F}
+@font-face{font-family:Mont;font-weight:400;src:url(node_modules/@fontsource/montserrat/files/montserrat-latin-400-normal.woff2)}
+@font-face{font-family:Mont;font-weight:500;src:url(node_modules/@fontsource/montserrat/files/montserrat-latin-500-normal.woff2)}
+@font-face{font-family:Mont;font-weight:600;src:url(node_modules/@fontsource/montserrat/files/montserrat-latin-600-normal.woff2)}
+@font-face{font-family:Mont;font-weight:700;src:url(node_modules/@fontsource/montserrat/files/montserrat-latin-700-normal.woff2)}
+@font-face{font-family:Mont;font-weight:800;src:url(node_modules/@fontsource/montserrat/files/montserrat-latin-800-normal.woff2)}
+@font-face{font-family:Bask;font-style:italic;src:url(node_modules/@fontsource/libre-baskerville/files/libre-baskerville-latin-400-italic.woff2)}
+html,body{margin:0;background:#000;overflow:hidden}
+canvas{display:block}
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+const W = 1920, H = 1080;
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+let TL = null;
+
+// ---------- palette (charte MboMa & Co.) ----------
+const C = {
+  bg0: '#0A1A10', bg1: '#13311F', bg2: '#1B3D27',
+  green: '#6E8F3A', lime: '#8BC34A', light: '#AFC18B',
+  orange: '#E8902A', orangeD: '#C8742A', cream: '#F5F2E9', grey: '#3A3A3A'
+};
+
+// ---------- math ----------
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const P = (t, a, d) => clamp((t - a) / d);
+const eOut = x => 1 - Math.pow(1 - x, 3);
+const eIn = x => x * x * x;
+const eIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eExpo = x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x);
+const eBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+function rnd(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const hash = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+// in/out envelope: fade in at a over din, fade out at b over dout
+const io = (t, a, b, din = .45, dout = .35) => eOut(P(t, a, din)) * (1 - eIn(P(t, b - dout, dout)));
+
+// word time lookup: W('seg','prefix')
+function WT(seg, prefix, nth = 0) {
+  let n = 0;
+  for (const w of TL.words) if (w.seg === seg && w.text.toLowerCase().startsWith(prefix.toLowerCase())) { if (n === nth) return w.start; n++; }
+  throw new Error('word not found ' + seg + ' ' + prefix);
+}
+
+// ---------- text helpers ----------
+function font(f, size, weight = 600, style = '') {
+  if (f === 'A') return `${size}px Anton`;
+  if (f === 'B') return `italic ${size}px Bask`;
+  return `${style} ${weight} ${size}px Mont`;
+}
+function txt(s, x, y, o = {}) {
+  ctx.save();
+  ctx.font = font(o.f || 'M', o.size || 40, o.w || 600);
+  ctx.letterSpacing = (o.ls || 0) + 'px';
+  ctx.fillStyle = o.color || C.cream;
+  ctx.textAlign = o.align || 'left';
+  ctx.textBaseline = o.base || 'alphabetic';
+  ctx.globalAlpha *= (o.alpha == null ? 1 : o.alpha);
+  if (o.glow) { ctx.shadowColor = o.glow; ctx.shadowBlur = o.glowB || 30; }
+  if (o.stroke) { ctx.strokeStyle = o.stroke; ctx.lineWidth = o.lw || 2; ctx.strokeText(s, x, y); }
+  else ctx.fillText(s, x, y);
+  ctx.restore();
+}
+function measure(s, o = {}) {
+  ctx.save(); ctx.font = font(o.f || 'M', o.size || 40, o.w || 600); ctx.letterSpacing = (o.ls || 0) + 'px';
+  const m = ctx.measureText(s).width; ctx.restore(); return m;
+}
+// mask-reveal from below (classic motion-design text rise)
+function rise(s, x, y, t, t0, o = {}) {
+  const d = o.d || .6;
+  const k = eExpo(P(t, t0, d));
+  if (k <= 0) return;
+  const size = o.size || 40;
+  const out = o.out != null ? eIn(P(t, o.out, .4)) : 0;
+  const w = measure(s, o) + 40;
+  let x0 = x - 20; if (o.align === 'center') x0 = x - w / 2; if (o.align === 'right') x0 = x - w + 20;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x0, y - size * 1.15, w, size * 1.45); ctx.clip();
+  if (out >= 1) { ctx.restore(); return; }
+  txt(s, x, y + (1 - k) * size * 1.25 - out * size * 1.3, { ...o, alpha: (o.alpha == null ? 1 : o.alpha) * (1 - out) });
+  ctx.restore();
+}
+// per-word stagger rise
+function riseWords(s, x, y, t, t0, o = {}) {
+  const words = s.split(' ');
+  const sp = measure(' ', o);
+  let total = words.reduce((a, w) => a + measure(w, o), 0) + sp * (words.length - 1);
+  let cx = o.align === 'center' ? x - total / 2 : (o.align === 'right' ? x - total : x);
+  words.forEach((w, i) => {
+    rise(w, cx, y, t, t0 + i * (o.stag || .06), { ...o, align: 'left' });
+    cx += measure(w, o) + sp;
+  });
+}
+function typeOn(s, x, y, t, t0, cps, o = {}) {
+  const n = Math.floor(clamp((t - t0) * cps, 0, s.length));
+  if (n <= 0) return;
+  txt(s.slice(0, n), x, y, o);
+  if (n < s.length && Math.floor(t * 4) % 2 === 0) {
+    const w = measure(s.slice(0, n), o);
+    ctx.fillStyle = o.color || C.cream; ctx.fillRect(x + w + 4, y - (o.size || 40) * .8, 3, (o.size || 40) * .9);
+  }
+}
+
+// ---------- shapes ----------
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function line(x1, y1, x2, y2, col, lw = 2, a = 1) { ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore(); }
+function bar(x, y, w, h, col, a = 1) { ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = col; ctx.fillRect(x, y, w, h); ctx.restore(); }
+
+// paw (brand emblem), drawn on a 100x100 box centred at 50,50
+function pawPath(c) {
+  c.beginPath();
+  c.ellipse(27, 42, 8.5, 11, -0.35, 0, Math.PI * 2);
+  c.ellipse(41, 27, 9, 12, -0.12, 0, Math.PI * 2);
+  c.ellipse(59, 27, 9, 12, 0.12, 0, Math.PI * 2);
+  c.ellipse(73, 42, 8.5, 11, 0.35, 0, Math.PI * 2);
+  c.moveTo(27, 64);
+  c.bezierCurveTo(27, 52, 39, 47, 50, 47);
+  c.bezierCurveTo(61, 47, 73, 52, 73, 64);
+  c.bezierCurveTo(73, 75, 60, 86, 50, 88);
+  c.bezierCurveTo(40, 86, 27, 75, 27, 64);
+  c.closePath();
+}
+function drawPaw(cx, cy, size, col, a = 1, rot = 0, dotted = false) {
+  ctx.save(); ctx.globalAlpha *= a; ctx.translate(cx, cy); ctx.rotate(rot); ctx.scale(size / 100, size / 100); ctx.translate(-50, -50);
+  pawPath(ctx); ctx.fillStyle = col; ctx.fill();
+  if (dotted) {
+    ctx.save(); pawPath(ctx); ctx.clip();
+    ctx.fillStyle = 'rgba(10,40,20,0.28)';
+    for (let yy = 14; yy < 92; yy += 4.2) for (let xx = 14; xx < 88; xx += 4.2) {
+      const r = 0.55 + 0.9 * ((yy - 14) / 78);
+      ctx.beginPath(); ctx.arc(xx + ((yy / 4.2) % 2) * 2.1, yy, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  ctx.restore();
+}
+// full emblem with double ring, ring drawn progressively by k
+function emblem(cx, cy, R, k, a = 1, col = C.lime) {
+  ctx.save(); ctx.globalAlpha *= a;
+  ctx.strokeStyle = col; ctx.lineCap = 'round';
+  ctx.lineWidth = R * 0.045;
+  ctx.beginPath(); ctx.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * eIO(clamp(k * 1.25)), false); ctx.stroke();
+  ctx.lineWidth = R * 0.02;
+  ctx.beginPath(); ctx.arc(cx, cy, R * 0.88, Math.PI / 2, Math.PI / 2 + Math.PI * 2 * eIO(clamp(k * 1.25 - .15)), false); ctx.stroke();
+  const pk = eBack(clamp(k * 1.6 - .45));
+  if (pk > 0) drawPaw(cx, cy + R * .02, R * 1.3 * pk, col, clamp(pk), 0, true);
+  ctx.restore();
+}
+
+// ---------- images ----------
+const IMG = {};
+function loadImg(k, src) { return new Promise(r => { const i = new Image(); i.onload = () => { IMG[k] = i; r(); }; i.onerror = () => r(); i.src = src; }); }
+
+// ---------- Africa (approximate outline, lon/lat) ----------
+const AFR = [[-5.9, 35.8], [-1, 35.1], [3, 36.8], [10.2, 37.2], [11, 35.2], [10.1, 33.8], [11.5, 33], [13.2, 32.9], [15.5, 31.5], [19.9, 30.9], [20.1, 32.1], [23.1, 32.6], [25.2, 31.6], [29.9, 31.2], [32.3, 31.3], [34.2, 31.2], [32.6, 30], [33.6, 27.2], [35.5, 23.9], [37.2, 21], [38.6, 18], [39.7, 15.6], [41.7, 13.5], [43.3, 12.6], [44, 10.6], [45.5, 10.6], [51.2, 11.8], [51, 10.4], [49.1, 6], [47.9, 4.4], [46, 2], [43.5, -0.6], [41.6, -1.7], [39.7, -4.2], [39.3, -6.8], [40.4, -10.5], [40.6, -14.5], [40.1, -16.2], [36.9, -17.9], [35.3, -21.3], [35.5, -23.7], [32.9, -25.9], [32.6, -28.6], [31, -29.9], [28, -32.9], [25.6, -34], [20, -34.8], [18.4, -34.2], [18, -32], [16.5, -28.6], [15.2, -26.6], [14.5, -22.9], [13.4, -20.9], [11.8, -17.2], [12, -13], [13.6, -11.5], [13.2, -8.8], [12.2, -6], [11.8, -4.8], [9.4, -0.7], [9.3, 0.4], [9.6, 2.8], [9.8, 3.9], [8.5, 4.5], [6, 4.3], [4.5, 6.3], [3.4, 6.4], [1.2, 6.1], [-2, 4.8], [-4, 5.3], [-7.5, 4.4], [-9.5, 5.5], [-11, 6.8], [-13.2, 8.5], [-15, 11], [-16.8, 12.5], [-17.1, 14.7], [-16.5, 16.5], [-16.1, 19.5], [-16.9, 21.3], [-14.5, 26.1], [-12, 28], [-9.8, 29.5], [-9.6, 30.4], [-8.5, 33.3], [-6.8, 34], [-5.9, 35.8]];
+const MADA = [[49.3, -12], [50.4, -15.5], [49.7, -17], [47.1, -25], [45.2, -25.5], [43.6, -23.5], [44.1, -20.5], [44.4, -16.3], [46.3, -15.7], [48, -13.6], [49.3, -12]];
+const CITIES = { kin: [15.3, -4.3], bzv: [15.25, -4.25], lub: [27.5, -11.7], dkr: [-17.4, 14.7], abj: [-4, 5.3], los: [3.4, 6.5], dla: [9.7, 4.05], lbv: [9.45, 0.4], nbo: [36.8, -1.3], kgl: [30.1, -1.95], add: [38.7, 9.0], acc: [-0.2, 5.6], jnb: [28, -26.2], cai: [31.2, 30], cas: [-7.6, 33.6], lad: [13.2, -8.8] };
+function inPoly(x, y, poly) {
+  let ins = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i], [xj, yj] = poly[j];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) ins = !ins;
+  }
+  return ins;
+}
+let AFR_DOTS = [];
+function buildAfrica() {
+  const step = 1.25;
+  for (let lat = 38; lat > -36; lat -= step) for (let lon = -19; lon < 53; lon += step) {
+    if (inPoly(lon, lat, AFR) || inPoly(lon, lat, MADA)) AFR_DOTS.push([lon, lat, hash(AFR_DOTS.length)]);
+  }
+}
+// project lon/lat into a box centred at cx,cy with height h
+function proj(lon, lat, cx, cy, h) { const s = h / 74; return [cx + (lon - 17) * s, cy - (lat - 1) * s]; }
+function drawAfrica(t, cx, cy, h, k, o = {}) {
+  const s = h / 74, r0 = s * (o.dot || .42);
+  const r = rnd(11);
+  ctx.save();
+  for (let i = 0; i < AFR_DOTS.length; i++) {
+    const [lon, lat, hv] = AFR_DOTS[i];
+    const [x, y] = proj(lon, lat, cx, cy, h);
+    const kk = eOut(clamp(k * 1.6 - hv * .6));
+    if (kk <= 0) continue;
+    const sx = lerp(x + (hash(i * 3.1) - .5) * 1400, x, kk), sy = lerp(y + (hash(i * 7.3) - .5) * 900, y, kk);
+    const pulse = .55 + .45 * Math.sin(t * 1.4 + lon * .15 + lat * .1);
+    let col = o.col || C.green;
+    if (o.highlight && o.highlight(lon, lat)) col = C.lime;
+    ctx.globalAlpha = kk * (o.alpha || .9) * (.55 + .45 * pulse);
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(sx, sy, r0 * (.7 + .3 * pulse), 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+function arcLink(x1, y1, x2, y2, k, col, lw = 2, lift = .35) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - Math.hypot(x2 - x1, y2 - y1) * lift;
+  const N = 40, n = Math.floor(N * clamp(k));
+  if (n < 1) return;
+  ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
+  for (let i = 0; i <= n; i++) {
+    const u = i / N; const x = (1 - u) * (1 - u) * x1 + 2 * (1 - u) * u * mx + u * u * x2; const y = (1 - u) * (1 - u) * y1 + 2 * (1 - u) * u * my + u * u * y2;
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  }
+  ctx.stroke();
+  const u = n / N; const hx = (1 - u) * (1 - u) * x1 + 2 * (1 - u) * u * mx + u * u * x2, hy = (1 - u) * (1 - u) * y1 + 2 * (1 - u) * u * my + u * u * y2;
+  ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 16; ctx.beginPath(); ctx.arc(hx, hy, lw * 2.2, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function cityPin(x, y, t, a, col = C.orange, r = 6) {
+  ctx.save(); ctx.globalAlpha *= a;
+  const ph = (t * .8) % 1;
+  ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.globalAlpha *= (1 - ph);
+  ctx.beginPath(); ctx.arc(x, y, r + ph * 26, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+  ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 14; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+}
+
+// ---------- background / global layers ----------
+let GRAIN = [];
+function buildGrain() {
+  for (let g = 0; g < 6; g++) {
+    const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+    const id = x.createImageData(256, 256); const r = rnd(100 + g);
+    for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
+    x.putImageData(id, 0, 0); GRAIN.push(c);
+  }
+}
+function background(t, tone = 0) {
+  const g = ctx.createRadialGradient(W * .62, H * .45, 50, W * .5, H * .5, W * .85);
+  g.addColorStop(0, tone ? '#1E4A2C' : C.bg2); g.addColorStop(.55, C.bg1); g.addColorStop(1, C.bg0);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // fine institutional grid
+  ctx.save(); ctx.globalAlpha = .045; ctx.strokeStyle = C.light; ctx.lineWidth = 1;
+  const off = (t * 12) % 80;
+  for (let x = -80 + off; x < W; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  ctx.restore();
+  // drifting particles
+  ctx.save();
+  for (let i = 0; i < 70; i++) {
+    const x = (hash(i) * W + t * (8 + hash(i + 9) * 20)) % W, y = (hash(i + 50) * H - t * (4 + hash(i + 3) * 10) + H * 10) % H;
+    ctx.globalAlpha = .08 + .18 * hash(i + 77); ctx.fillStyle = i % 7 === 0 ? C.orange : C.light;
+    ctx.beginPath(); ctx.arc(x, y, 1 + hash(i + 5) * 2.2, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+function postFX(t) {
+  // vignette
+  const v = ctx.createRadialGradient(W / 2, H / 2, H * .45, W / 2, H / 2, W * .75);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.55)');
+  ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  // grain
+  const f = Math.floor(t * 30);
+  ctx.save(); ctx.globalAlpha = .045; ctx.globalCompositeOperation = 'overlay';
+  const gimg = GRAIN[f % GRAIN.length];
+  const ox = (f * 73) % 256, oy = (f * 151) % 256;
+  ctx.translate(-ox, -oy);
+  for (let x = 0; x < W + 256; x += 256) for (let y = 0; y < H + 256; y += 256) ctx.drawImage(gimg, x, y);
+  ctx.restore();
+}
+// chapter tag top-left
+function chapter(t, sc, num, label) {
+  const a = io(t, sc.start + .25, sc.end, .5, .3);
+  if (a <= 0) return;
+  const k = eExpo(P(t, sc.start + .25, .8));
+  ctx.save(); ctx.globalAlpha = a;
+  bar(96, 92, 4, 44, C.orange);
+  txt(num, 120, 128, { f: 'A', size: 40, color: C.orange });
+  const nw = measure(num, { f: 'A', size: 40 });
+  line(120 + nw + 16, 112, 120 + nw + 16 + 60 * k, 112, C.light, 2, .6);
+  rise(label, 120 + nw + 92, 124, t, sc.start + .35, { size: 22, w: 700, ls: 6, color: C.cream, d: .6 });
+  ctx.restore();
+}
+// TV-style brand bug bottom-right
+function bug(t) {
+  const a = io(t, 2.2, TL.scenes.find(s => s.id === 'logo').start, .8, .4) * .75;
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a;
+  drawPaw(1640, 1000, 36, C.lime, 1);
+  ctx.strokeStyle = C.lime; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(1640, 1000, 24, 0, Math.PI * 2); ctx.stroke();
+  line(1674, 984, 1674, 1016, C.orange, 1.5);
+  txt('MboMa & Co.', 1686, 1008, { size: 21, w: 600, color: C.cream, ls: 1 });
+  ctx.restore();
+}
+// lower third label
+function lowerThird(t, t0, t1, title, sub) {
+  const a = io(t, t0, t1, .4, .3); if (a <= 0) return;
+  const k = eExpo(P(t, t0, .7));
+  ctx.save(); ctx.globalAlpha = a;
+  const w = Math.max(measure(title, { f: 'A', size: 46, ls: 1 }), measure(sub || '', { size: 22, w: 600, ls: 3 })) + 80;
+  ctx.fillStyle = 'rgba(8,24,14,0.82)'; ctx.fillRect(96, 830, w * k, 130);
+  bar(96, 830, 8, 130, C.orange);
+  if (k > .3) {
+    rise(title, 130, 892, t, t0 + .15, { f: 'A', size: 46, color: C.cream, ls: 1 });
+    if (sub) rise(sub, 132, 934, t, t0 + .3, { size: 22, w: 600, ls: 3, color: C.lime });
+  }
+  ctx.restore();
+}
+
+// ---------- transition: brand bars wipe ----------
+function wipe(t, B) {
+  const d = .62, t0 = B - d / 2;
+  const u = (t - t0) / d; if (u < 0 || u > 1.25) return;
+  const cols = [C.lime, C.orange, C.bg0];
+  cols.forEach((col, i) => {
+    const uu = clamp((u - i * .1) / 1);
+    if (uu <= 0 || uu >= 1) return;
+    const x = lerp(-W * 1.6, W * 1.25, eIO(uu));
+    ctx.save(); ctx.fillStyle = col;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + W * 1.25, 0); ctx.lineTo(x + W * 1.25 - 300, H); ctx.lineTo(x - 300, H); ctx.closePath(); ctx.fill();
+    if (i === 2) drawPaw(x + W * .62, H / 2, 140, C.green, .5);
+    ctx.restore();
+  });
+}
+
+// =====================================================================
+//                               SCENES
+// =====================================================================
+const S = {};
+
+// 1 — INTRO -----------------------------------------------------------
+S.intro = (t, sc) => {
+  // speed streaks: "un monde qui s'accélère"
+  const sa = io(t, 0, 3.4, .6, .9);
+  ctx.save();
+  for (let i = 0; i < 46; i++) {
+    const y = hash(i) * H, len = 200 + hash(i + 3) * 600, sp = 900 + hash(i + 7) * 2600;
+    const x = W - ((t * sp + hash(i + 11) * 4000) % (W + len + 400));
+    ctx.globalAlpha = sa * (.08 + .25 * hash(i + 2));
+    const g = ctx.createLinearGradient(x, 0, x + len, 0);
+    const col = i % 6 === 0 ? C.orange : C.lime;
+    g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(x, y, len, 1.5 + hash(i + 4) * 2.5);
+  }
+  ctx.restore();
+
+  const tAf = WT('intro', "l'afrique");
+  const k = P(t, tAf - .9, 2.2);
+  const mx = 1330, my = 540, mh = 900;
+  drawAfrica(t, mx, my, mh, k);
+  // links between capitals
+  const pairs = [['kin', 'dkr'], ['kin', 'nbo'], ['kin', 'jnb'], ['kin', 'los'], ['kin', 'cai'], ['dla', 'abj'], ['nbo', 'add'], ['kin', 'lub'], ['kgl', 'kin'], ['cas', 'dkr']];
+  pairs.forEach(([a, b], i) => {
+    const t0 = tAf + .9 + i * .28;
+    const [x1, y1] = proj(...CITIES[a], mx, my, mh), [x2, y2] = proj(...CITIES[b], mx, my, mh);
+    ctx.save(); ctx.globalAlpha = io(t, t0, sc.end + 1, .3, .3) * .85;
+    arcLink(x1, y1, x2, y2, eIO(P(t, t0, 1.1)), i % 3 === 0 ? C.orange : C.lime, 2);
+    ctx.restore();
+  });
+  Object.values(CITIES).forEach((c, i) => {
+    const [x, y] = proj(...c, mx, my, mh);
+    cityPin(x, y, t + i * .2, eOut(P(t, tAf + .8 + i * .07, .4)) * .9, i === 0 ? C.orange : C.lime, i === 0 ? 7 : 4.5);
+  });
+
+  // copy
+  const t1 = WT('intro', 'dans');
+  const out1 = WT('intro', 'elle') - .25;
+  riseWords("Dans un monde qui s'accélère,", 140, 380, t, t1 - .1, { size: 34, w: 500, color: C.light, ls: 1, out: out1 });
+  riseWords("L'AFRIQUE N'A PLUS", 140, 500, t, tAf - .05, { f: 'A', size: 104, color: C.cream, out: out1, stag: .09 });
+  riseWords("LE TEMPS D'ATTENDRE.", 140, 620, t, WT('intro', 'temps') - .1, { f: 'A', size: 104, color: C.cream, out: out1, stag: .09 });
+  // structure / vision / impact
+  const tb = WT('intro', 'besoin');
+  rise("ELLE A BESOIN DE", 144, 330, t, tb - .15, { size: 30, w: 700, ls: 8, color: C.light });
+  const items = [['STRUCTURE.', WT('intro', 'structure'), C.cream], ['VISION.', WT('intro', 'vision'), C.lime], ['IMPACT.', WT('intro', "d'impact"), C.orange]];
+  items.forEach(([w, ti, col], i) => {
+    const s = 1 + .25 * (1 - eOut(P(t, ti, .5)));
+    ctx.save(); ctx.translate(140, 470 + i * 150); ctx.scale(s, s);
+    rise(w, 0, 0, t, ti - .05, { f: 'A', size: 150, color: col, d: .45 });
+    ctx.restore();
+  });
+};
+
+// 2 — INSTITUTION (logo reveal) -----------------------------------------
+S.institution = (t, sc) => {
+  const t0 = sc.start;
+  // rotating rays
+  ctx.save(); ctx.translate(W / 2, 420); ctx.rotate(t * .05);
+  for (let i = 0; i < 36; i++) {
+    ctx.rotate(Math.PI * 2 / 36);
+    ctx.globalAlpha = .035 * io(t, t0, sc.end); ctx.fillStyle = i % 2 ? C.lime : C.cream;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(1300, -40); ctx.lineTo(1300, 40); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+  // concentric pulse rings
+  for (let i = 0; i < 4; i++) {
+    const ph = ((t - t0) * .35 + i / 4) % 1;
+    ctx.save(); ctx.globalAlpha = (1 - ph) * .18 * io(t, t0 + .4, sc.end); ctx.strokeStyle = C.lime; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(W / 2, 420, 170 + ph * 700, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  }
+  const k = P(t, t0 + .05, 1.5);
+  const tSub = WT('institution', 'institution');
+  const mv = eIO(P(t, tSub - .4, .9));
+  const ex = lerp(W / 2 - 330, W / 2 - 300, mv), ey = lerp(470, 300, mv), R = lerp(185, 120, mv);
+  emblem(ex, ey, R, k, 1);
+  // vertical orange separator + wordmark
+  const sk = eExpo(P(t, t0 + .7, .7));
+  bar(ex + R + 50, ey - R * .75 * sk, 4, R * 1.5 * sk, C.orange);
+  const wm = WT('institution', 'mboma');
+  ctx.save(); ctx.beginPath(); ctx.rect(ex + R + 70, ey - 120, 900, 240); ctx.clip();
+  const wk = eExpo(P(t, wm, .9));
+  txt('MboMa', ex + R + 90 - (1 - wk) * 500, ey + R * .22, { size: R * .62, w: 600, color: C.lime, alpha: wk });
+  const mw = measure('MboMa', { size: R * .62, w: 600 });
+  txt('& Co.', ex + R + 90 + mw + R * .15 - (1 - wk) * 500, ey + R * .22, { size: R * .5, w: 500, color: C.cream, alpha: wk });
+  ctx.restore();
+
+  rise('INSTITUTION PANAFRICAINE', W / 2, 590, t, tSub, { f: 'A', size: 96, color: C.cream, align: 'center', ls: 2 });
+  riseWords('de pilotage & de gouvernance de projets complexes', W / 2, 668, t, WT('institution', 'pilotage') - .1, { size: 38, w: 500, color: C.light, align: 'center', stag: .05 });
+  const ti = WT('institution', "l'interface");
+  rise("À l'interface des nations", W / 2 - 20, 800, t, ti - .3, { f: 'B', size: 50, color: C.cream, align: 'right' });
+  rise("… et du futur.", W / 2 + 10, 800, t, WT('institution', 'du') - .1, { f: 'B', size: 50, color: C.orange, align: 'left' });
+  const lk = eExpo(P(t, ti, 1.2));
+  line(W / 2 - 360 * lk, 850, W / 2 + 360 * lk, 850, C.green, 2, .9);
+};
+
+// 3 — PARTENAIRE --------------------------------------------------------
+S.partenaire = (t, sc) => {
+  chapter(t, sc, '01', "L'INSTITUTION");
+  const t0 = sc.start;
+  // founder portrait panel
+  const img = IMG.founder;
+  const pa = io(t, t0 + .2, sc.end, .7, .4);
+  const px = 140, py = 210, pw = 470, ph = 660;
+  if (img && pa > 0) {
+    const k = eExpo(P(t, t0 + .2, 1));
+    ctx.save(); ctx.globalAlpha = pa;
+    rr(px, py + (1 - k) * 80, pw, ph, 18); ctx.clip();
+    // crop on the person (right part of the source), slow push-in
+    const z = 1 + .08 * P(t, t0, sc.end - t0);
+    const sw = 300 / z, sh = 422 / z, sx = 345 + (300 - sw) / 2, sy = 6 + (422 - sh) * .35;
+    ctx.filter = 'contrast(1.05) saturate(1.05)';
+    ctx.drawImage(img, sx, sy, sw, sh, px, py + (1 - k) * 80, pw, ph);
+    ctx.filter = 'none';
+    const g = ctx.createLinearGradient(0, py + ph * .55, 0, py + ph);
+    g.addColorStop(0, 'rgba(8,26,15,0)'); g.addColorStop(1, 'rgba(8,26,15,0.95)');
+    ctx.fillStyle = g; ctx.fillRect(px, py, pw, ph);
+    ctx.restore();
+    ctx.save(); ctx.globalAlpha = pa;
+    ctx.strokeStyle = C.lime; ctx.lineWidth = 3; rr(px - 14, py - 14 + (1 - k) * 80, pw + 28, ph + 28, 24); ctx.globalAlpha *= .35; ctx.stroke(); ctx.restore();
+    rise('Charmant Nyungu K.', px + 34, py + ph - 70, t, t0 + .9, { size: 34, w: 700, color: C.cream, out: sc.end - .4 });
+    rise('PRÉSIDENT & FONDATEUR', px + 36, py + ph - 30, t, t0 + 1.05, { size: 18, w: 700, ls: 5, color: C.orange, out: sc.end - .4 });
+  }
+  const X = 720;
+  const tCab = WT('partenaire', 'cabinet');
+  const tPar = WT('partenaire', 'partenaire');
+  const tCoh = WT('partenaire', 'cohérence');
+  const out1 = tCoh - .6;
+  rise('NOUS NE SOMMES PAS UN', X, 300, t, WT('partenaire', 'nous') - .1, { size: 28, w: 700, ls: 6, color: C.light, out: out1 });
+  rise('cabinet de conseil traditionnel.', X, 380, t, tCab - .15, { f: 'B', size: 58, color: C.cream, out: out1, alpha: lerp(1, .45, P(t, tCab + .9, .4)) });
+  const sw = measure('cabinet de conseil traditionnel', { f: 'B', size: 58 });
+  const sk = eIO(P(t, WT('partenaire', 'traditionnel'), .55));
+  if (t < out1 + .4) bar(X - 6, 360, (sw + 12) * sk, 6, C.orange, 1 - P(t, out1, .4));
+  // headline moves up when pillars appear
+  const up = eIO(P(t, out1, .8)) * 210;
+  rise('UN PARTENAIRE INSTITUTIONNEL', X, 520 - up, t, tPar - .1, { f: 'A', size: 88, color: C.lime });
+  rise('DE LONG TERME.', X, 620 - up, t, WT('partenaire', 'long') - .1, { f: 'A', size: 88, color: C.cream });
+  // pillars
+  const pillars = [['VISION', 'POLITIQUE', WT('partenaire', 'vision'), 'eye'], ['STRUCTURE', 'FINANCIÈRE', WT('partenaire', 'structure'), 'bank'], ['DÉPLOIEMENT', 'TECHNIQUE', WT('partenaire', 'déploiement'), 'gear']];
+  const cy = 520, cw = 330, ch = 300, gap = 30;
+  rise('COHÉRENCE', X, cy - 20 + 0, t, tCoh - .1, { size: 20, w: 800, ls: 10, color: C.orange });
+  const lk = eIO(P(t, tCoh, 3.6));
+  line(X, cy + ch / 2 + 20, X + (cw * 3 + gap * 2) * lk, cy + ch / 2 + 20, C.orange, 2, .6);
+  pillars.forEach(([a, b, ti, ic], i) => {
+    const k = eBack(P(t, ti - .15, .6)); if (k <= 0) return;
+    const x = X + i * (cw + gap), y = cy + 20 + (1 - k) * 60;
+    ctx.save(); ctx.globalAlpha = clamp(k);
+    ctx.fillStyle = 'rgba(14,40,24,0.92)'; rr(x, y, cw, ch, 14); ctx.fill();
+    ctx.strokeStyle = 'rgba(175,193,139,0.25)'; ctx.lineWidth = 1.5; ctx.stroke();
+    bar(x, y, cw * clamp(k), 5, i === 1 ? C.orange : C.lime);
+    icon(ic, x + 50, y + 70, 54, i === 1 ? C.orange : C.lime, t);
+    txt(a, x + 30, y + ch - 82, { f: 'A', size: 46, color: C.cream });
+    txt(b, x + 30, y + ch - 36, { size: 24, w: 700, ls: 4, color: C.light });
+    txt('0' + (i + 1), x + cw - 30, y + 64, { f: 'A', size: 40, color: 'rgba(175,193,139,0.3)', align: 'right' });
+    ctx.restore();
+  });
+};
+
+// simple line icons
+function icon(name, x, y, s, col, t) {
+  ctx.save(); ctx.translate(x, y); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = s * .07; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const h = s / 2;
+  if (name === 'eye') {
+    ctx.beginPath(); ctx.moveTo(-h, 0); ctx.quadraticCurveTo(0, -h * 1.1, h, 0); ctx.quadraticCurveTo(0, h * 1.1, -h, 0); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, h * .32, 0, Math.PI * 2); ctx.fill();
+  } else if (name === 'bank') {
+    ctx.beginPath(); ctx.moveTo(-h, -h * .35); ctx.lineTo(0, -h); ctx.lineTo(h, -h * .35); ctx.closePath(); ctx.stroke();
+    for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(i * h * .4, -h * .2); ctx.lineTo(i * h * .4, h * .65); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(-h, h * .85); ctx.lineTo(h, h * .85); ctx.stroke();
+  } else if (name === 'gear') {
+    ctx.rotate(t * .8);
+    for (let i = 0; i < 8; i++) { ctx.rotate(Math.PI / 4); ctx.fillRect(-h * .14, -h * 1.0, h * .28, h * .35); }
+    ctx.beginPath(); ctx.arc(0, 0, h * .68, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, h * .26, 0, Math.PI * 2); ctx.stroke();
+  } else if (name === 'search') {
+    ctx.beginPath(); ctx.arc(-h * .15, -h * .15, h * .55, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(h * .25, h * .25); ctx.lineTo(h * .8, h * .8); ctx.stroke();
+  } else if (name === 'check') {
+    rr(-h * .7, -h * .9, h * 1.4, h * 1.8, 6); ctx.stroke();
+    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(-h * .4, -h * .45 + i * h * .5); ctx.lineTo(-h * .25, -h * .3 + i * h * .5); ctx.lineTo(0, -h * .6 + i * h * .5); ctx.stroke(); ctx.beginPath(); ctx.moveTo(h * .12, -h * .45 + i * h * .5); ctx.lineTo(h * .45, -h * .45 + i * h * .5); ctx.stroke(); }
+  } else if (name === 'blueprint') {
+    rr(-h * .9, -h * .7, h * 1.8, h * 1.4, 4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-h * .9, 0); ctx.lineTo(h * .1, 0); ctx.lineTo(h * .1, h * .7); ctx.moveTo(h * .1, -h * .7); ctx.lineTo(h * .1, -h * .3); ctx.moveTo(h * .1, 0); ctx.lineTo(h * .9, 0); ctx.stroke();
+  } else if (name === 'rocket') {
+    ctx.rotate(-Math.PI / 4);
+    ctx.beginPath(); ctx.moveTo(0, -h); ctx.quadraticCurveTo(h * .45, -h * .4, h * .3, h * .45); ctx.lineTo(-h * .3, h * .45); ctx.quadraticCurveTo(-h * .45, -h * .4, 0, -h); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, -h * .25, h * .14, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-h * .3, h * .2); ctx.lineTo(-h * .6, h * .65); ctx.lineTo(-h * .3, h * .45); ctx.moveTo(h * .3, h * .2); ctx.lineTo(h * .6, h * .65); ctx.lineTo(h * .3, h * .45); ctx.stroke();
+    ctx.globalAlpha *= .5 + .5 * Math.sin(t * 20); ctx.beginPath(); ctx.moveTo(-h * .15, h * .55); ctx.lineTo(0, h * .95); ctx.lineTo(h * .15, h * .55); ctx.fill();
+  } else if (name === 'user') {
+    ctx.beginPath(); ctx.arc(0, -h * .35, h * .38, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, h * .9, h * .8, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// 4 — EXPERTISES ---------------------------------------------------------
+const EXP = [
+  ['TRANSFORMATION', 'NUMÉRIQUE', 'Digitalisation des processus étatiques et institutionnels.', 'transformation'],
+  ["ÉCOSYSTÈMES", "D'INNOVATION", "Hubs d'innovation, clusters et partenariats public-privé.", 'structuration'],
+  ['GOUVERNANCE', 'DE PROGRAMMES', "Pilotage de projets complexes à l'échelle nationale et régionale.", 'gouvernance'],
+  ['TRAITEMENT &', 'VALORISATION DES DONNÉES', 'Collecte, analyse avancée et extraction de valeur stratégique.', 'traitement'],
+  ['TOKENISATION', '& BLOCKCHAIN', "Numérisation d'actifs et écosystèmes décentralisés.", 'tokenisation'],
+];
+S.expertises = (t, sc) => {
+  chapter(t, sc, '02', 'EXPERTISES');
+  rise('CONCEVOIR LE CADRE.', 140, 250, t, WT('expertises', 'nos') - .2, { f: 'A', size: 44, color: C.light });
+  rise("GARANTIR L'IMPACT.", 140 + measure('CONCEVOIR LE CADRE. ', { f: 'A', size: 44 }), 250, t, WT('expertises', 'expertises'), { f: 'A', size: 44, color: C.orange });
+  const times = EXP.map(e => WT('expertises', e[3]) - .25);
+  let cur = -1; times.forEach((ti, i) => { if (t >= ti) cur = i; });
+  // progress rail
+  EXP.forEach((e, i) => {
+    const x = 140 + i * 330, y = 960;
+    const on = t >= times[i];
+    const a = eOut(P(t, sc.start + .5 + i * .08, .5));
+    ctx.save(); ctx.globalAlpha = a;
+    bar(x, y, 300, 3, 'rgba(175,193,139,0.25)');
+    if (on) bar(x, y, 300 * eIO(clamp((t - times[i]) / ((times[i + 1] || sc.end) - times[i]))), 3, i === cur ? C.orange : C.lime);
+    txt('0' + (i + 1), x, y - 16, { f: 'A', size: 24, color: on ? C.cream : 'rgba(245,242,233,0.35)' });
+    txt(e[0], x + 40, y - 18, { size: 15, w: 700, ls: 3, color: on ? C.light : 'rgba(175,193,139,0.35)' });
+    ctx.restore();
+  });
+  // current item text block (left)
+  EXP.forEach((e, i) => {
+    const ti = times[i], tn = times[i + 1] || sc.end;
+    if (t < ti - .1 || t > tn + .1) return;
+    const outT = i < 4 ? tn - .3 : sc.end - .35;
+    ctx.save();
+    txt('0' + (i + 1), 140, 560, { f: 'A', size: 260, color: 'rgba(139,195,74,0.10)' });
+    rise(e[0], 150, 480, t, ti, { f: 'A', size: 92, color: C.cream, out: outT });
+    rise(e[1], 150, 580, t, ti + .08, { f: 'A', size: e[1].length > 16 ? 70 : 92, color: i % 2 ? C.orange : C.lime, out: outT });
+    riseWords(e[2], 152, 660, t, ti + .25, { size: 28, w: 500, color: C.light, out: outT, stag: .03 });
+    ctx.restore();
+    // visual (right)
+    const va = io(t, ti, tn + .05, .45, .3);
+    ctx.save(); ctx.globalAlpha = va;
+    const sl = (1 - eExpo(P(t, ti, .7))) * 120 - eIn(P(t, tn - .3, .35)) * 120;
+    ctx.translate(sl, 0);
+    expVisual(i, t - ti, t);
+    ctx.restore();
+  });
+};
+function panelFrame(x, y, w, h) {
+  ctx.fillStyle = 'rgba(10,30,18,0.75)'; rr(x, y, w, h, 18); ctx.fill();
+  ctx.strokeStyle = 'rgba(175,193,139,0.22)'; ctx.lineWidth = 1.5; ctx.stroke();
+}
+function expVisual(i, lt, t) {
+  const x0 = 1040, y0 = 300, w = 740, h = 540, cx = x0 + w / 2, cy = y0 + h / 2;
+  panelFrame(x0, y0, w, h);
+  ctx.save(); rr(x0, y0, w, h, 18); ctx.clip();
+  if (i === 0) {
+    // institution building → digital flows to cloud
+    const bk = eOut(clamp(lt / .8));
+    ctx.strokeStyle = C.light; ctx.lineWidth = 3;
+    const bx = cx - 170, by = cy + 150;
+    ctx.globalAlpha = bk;
+    ctx.beginPath(); ctx.moveTo(bx - 20, by - 190); ctx.lineTo(bx + 120, by - 260); ctx.lineTo(bx + 260, by - 190); ctx.closePath(); ctx.stroke();
+    for (let k = 0; k < 5; k++) { ctx.beginPath(); ctx.moveTo(bx + 10 + k * 55, by - 170); ctx.lineTo(bx + 10 + k * 55, by - 20); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(bx - 30, by); ctx.lineTo(bx + 270, by); ctx.stroke();
+    // cloud
+    const ccx = cx + 200, ccy = cy - 120;
+    ctx.globalAlpha = eOut(clamp((lt - .5) / .6));
+    ctx.strokeStyle = C.lime; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(ccx - 50, ccy + 10, 40, Math.PI * .5, Math.PI * 1.5); ctx.arc(ccx, ccy - 20, 55, Math.PI, 0); ctx.arc(ccx + 60, ccy + 10, 40, Math.PI * 1.5, Math.PI * .5); ctx.closePath(); ctx.stroke();
+    // binary flow
+    ctx.globalAlpha = 1;
+    for (let k = 0; k < 26; k++) {
+      const u = ((lt * .6 + hash(k)) % 1);
+      const sx = bx + 120 + (hash(k + 4) - .5) * 160, sy = by - 260;
+      const x = lerp(sx, ccx + (hash(k + 9) - .5) * 80, u), y = lerp(sy, ccy + 40, u) - Math.sin(u * Math.PI) * 60;
+      ctx.globalAlpha = Math.sin(u * Math.PI) * .9;
+      txt(hash(k + Math.floor(lt * 4)) > .5 ? '1' : '0', x, y, { f: 'M', size: 20, w: 700, color: k % 4 ? C.lime : C.orange });
+    }
+    ctx.globalAlpha = 1;
+    txt('E-GOUV · INTEROPÉRABILITÉ · CLOUD SOUVERAIN', cx, y0 + h - 34, { size: 16, w: 700, ls: 4, color: C.light, align: 'center' });
+  } else if (i === 1) {
+    // ecosystem network
+    const r = rnd(5); const nodes = [];
+    for (let k = 0; k < 22; k++) { const a = k / 22 * Math.PI * 2 + r() * .3, d = 90 + r() * 170; nodes.push([cx + Math.cos(a) * d * 1.35, cy + Math.sin(a) * d * .95, r()]); }
+    nodes.forEach(([x, y, h_], k) => {
+      const kk = eOut(clamp((lt - h_ * .8) / .5));
+      line(cx, cy, lerp(cx, x, kk), lerp(cy, y, kk), C.green, 2, .7);
+      const j = (k + 3) % nodes.length; if (kk >= 1) line(x, y, nodes[j][0], nodes[j][1], C.light, 1, .25);
+    });
+    nodes.forEach(([x, y, h_], k) => {
+      const kk = eBack(clamp((lt - h_ * .8 - .2) / .5)); if (kk <= 0) return;
+      ctx.fillStyle = k % 5 === 0 ? C.orange : C.lime; ctx.beginPath(); ctx.arc(x, y, (6 + h_ * 8) * kk, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.fillStyle = C.cream; ctx.beginPath(); ctx.arc(cx, cy, 34 * eBack(clamp(lt / .5)), 0, Math.PI * 2); ctx.fill();
+    drawPaw(cx, cy, 40 * clamp(lt / .5), C.green);
+    txt('HUBS · CLUSTERS · PARTENARIATS', cx, y0 + h - 34, { size: 16, w: 700, ls: 4, color: C.light, align: 'center' });
+  } else if (i === 2) {
+    // gantt
+    const rows = ['Cadrage', 'Financement', 'Conception', 'Déploiement', 'Suivi & Éval.'];
+    rows.forEach((n, k) => {
+      const y = y0 + 90 + k * 78;
+      txt(n, x0 + 40, y + 26, { size: 20, w: 600, color: C.light });
+      bar(x0 + 220, y + 30, 470, 1, 'rgba(175,193,139,0.2)');
+      const st = k * 70, len = 160 + (k % 2) * 90;
+      const kk = eOut(clamp((lt - .15 - k * .18) / .6));
+      ctx.fillStyle = k === 3 ? C.orange : C.lime; rr(x0 + 220 + st, y + 8, len * kk, 30, 6); ctx.fill();
+      if (kk >= 1) { ctx.save(); ctx.translate(x0 + 220 + st + len, y + 23); ctx.rotate(Math.PI / 4); ctx.fillStyle = C.cream; ctx.fillRect(-7, -7, 14, 14); ctx.restore(); }
+    });
+    const nx = x0 + 220 + 470 * clamp(lt / 2.2);
+    line(nx, y0 + 70, nx, y0 + 480, C.orange, 2, .8);
+    txt('PILOTAGE · CONSORTIUMS · SUIVI', cx, y0 + h - 22, { size: 16, w: 700, ls: 4, color: C.light, align: 'center' });
+  } else if (i === 3) {
+    // data: scatter → bars
+    for (let k = 0; k < 120; k++) {
+      const u = eIO(clamp((lt - .2 - hash(k) * .6) / 1.0));
+      const bxk = k % 8;
+      const tx = x0 + 110 + bxk * 74 + (hash(k + 1) - .5) * 30, ty = y0 + 440 - Math.floor(k / 8) * 22;
+      const sx = x0 + 40 + hash(k + 5) * (w - 80), sy = y0 + 40 + hash(k + 8) * 380;
+      const hgt = [10, 14, 9, 15, 12, 15, 13, 11][bxk];
+      if (Math.floor(k / 8) >= hgt) continue;
+      ctx.fillStyle = bxk === 5 ? C.orange : C.lime; ctx.globalAlpha = .9;
+      ctx.beginPath(); ctx.arc(lerp(sx, tx, u), lerp(sy, ty, u), 6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    // trend
+    const tk = clamp((lt - 1.1) / .8);
+    ctx.strokeStyle = C.cream; ctx.lineWidth = 3; ctx.beginPath();
+    for (let k = 0; k <= 7 * tk; k += .1) { const x = x0 + 110 + k * 74, y = y0 + 300 - k * 22 - Math.sin(k) * 14; k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.stroke();
+    txt('COLLECTE · ANALYSE · VALEUR', cx, y0 + h - 22, { size: 16, w: 700, ls: 4, color: C.light, align: 'center' });
+  } else if (i === 4) {
+    // blockchain blocks
+    for (let k = 0; k < 4; k++) {
+      const kk = eBack(clamp((lt - k * .3) / .5)); if (kk <= 0) continue;
+      const bx = x0 + 60 + k * 170, by = cy - 90;
+      ctx.save(); ctx.globalAlpha = clamp(kk); ctx.translate(bx + 65, by + 80); ctx.scale(kk, kk); ctx.translate(-65, -80);
+      ctx.fillStyle = 'rgba(139,195,74,0.12)'; ctx.strokeStyle = k === 3 ? C.orange : C.lime; ctx.lineWidth = 3;
+      rr(0, 0, 130, 160, 10); ctx.fill(); ctx.stroke();
+      txt('#' + (2410 + k), 16, 36, { size: 20, w: 800, color: C.cream });
+      for (let l = 0; l < 4; l++) bar(16, 58 + l * 20, 98 * (0.4 + hash(k * 9 + l) * .6), 7, 'rgba(175,193,139,0.5)');
+      txt('0x' + Math.floor(hash(k + 3) * 1e8).toString(16).slice(0, 6), 16, 148, { size: 14, w: 600, color: C.light });
+      ctx.restore();
+      if (k > 0 && kk > .8) { line(bx - 40, cy - 10, bx, cy - 10, C.light, 3); ctx.fillStyle = C.light; ctx.beginPath(); ctx.arc(bx - 20, cy - 10, 6, 0, Math.PI * 2); ctx.fill(); }
+    }
+    const tok = eOut(clamp((lt - 1.2) / .5));
+    ctx.save(); ctx.globalAlpha = tok; ctx.translate(cx, cy + 170); ctx.rotate(lt * 1.5);
+    ctx.strokeStyle = C.orange; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, 0, 40, 0, Math.PI * 2); ctx.stroke();
+    ctx.scale(Math.cos(lt * 3), 1); drawPaw(0, 0, 50, C.orange); ctx.restore();
+    txt('ACTIFS NUMÉRIQUES · TRAÇABILITÉ', cx, y0 + h - 22, { size: 16, w: 700, ls: 4, color: C.light, align: 'center' });
+  }
+  ctx.restore();
+}
+
+// 5 — MÉTHODE ------------------------------------------------------------
+S.methode = (t, sc) => {
+  chapter(t, sc, '03', 'NOTRE MÉTHODE');
+  const tMb = WT('methode', 'mboma');
+  const out = tMb - .6;
+  rise('NOTRE MÉTHODE EST CLAIRE.', 140, 290, t, WT('methode', 'notre') - .1, { f: 'A', size: 80, color: C.cream, out });
+  const steps = [['COMPRENDRE', 'LE TERRAIN', WT('methode', 'comprendre'), 'search'], ['AUDITER', 'DIAGNOSTIC', WT('methode', 'auditer'), 'check'], ['CONCEVOIR', 'LE CADRE', WT('methode', 'concevoir'), 'blueprint'], ['DÉPLOYER', "À L'ÉCHELLE", WT('methode', 'déployer'), 'rocket']];
+  const ly = 560, xs = [260, 720, 1180, 1640];
+  const fa = 1 - eIn(P(t, out, .5));
+  if (fa > 0) {
+    ctx.save(); ctx.globalAlpha = fa;
+    bar(xs[0], ly - 1, xs[3] - xs[0], 2, 'rgba(175,193,139,0.2)');
+    steps.forEach(([a, b, ti, ic], i) => {
+      if (i > 0) { const k = eIO(P(t, steps[i - 1][2], ti - steps[i - 1][2])); bar(xs[i - 1], ly - 2, (xs[i] - xs[i - 1]) * k, 4, C.orange); }
+      const k = eBack(P(t, ti - .2, .55)); if (k <= 0) return;
+      ctx.save(); ctx.translate(xs[i], ly); ctx.scale(k, k);
+      ctx.fillStyle = C.bg1; ctx.beginPath(); ctx.arc(0, 0, 78, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = i === 3 ? C.orange : C.lime; ctx.lineWidth = 4; ctx.stroke();
+      icon(ic, 0, 0, 62, i === 3 ? C.orange : C.lime, t);
+      ctx.restore();
+      txt('ÉTAPE 0' + (i + 1), xs[i], ly - 120, { size: 18, w: 800, ls: 5, color: C.orange, align: 'center', alpha: clamp(k) });
+      rise(a, xs[i], ly + 150, t, ti - .1, { f: 'A', size: 54, color: C.cream, align: 'center' });
+      rise(b, xs[i], ly + 192, t, ti, { size: 22, w: 700, ls: 4, color: C.light, align: 'center' });
+    });
+    ctx.restore();
+  }
+  // architecture
+  const tLab = WT('methode', 'laboratoire');
+  const tY = WT('methode', 'ybs');
+  rise('ARCHITECTURE DE MARQUE', W / 2, 270, t, tMb - .2, { size: 22, w: 800, ls: 10, color: C.orange, align: 'center' });
+  rise('Une synergie structurelle intelligente.', W / 2, 340, t, tMb, { f: 'B', size: 48, color: C.cream, align: 'center' });
+  const boxes = [
+    { x: 300, t0: tMb, name: 'MboMa & Co.', role: 'MAISON MÈRE', verb: 'STRUCTURE & DIRIGE', tv: WT('methode', 'structure'), col: C.lime, paw: true },
+    { x: 1080, t0: tLab - .2, name: 'YBS-Innovate', role: 'LABORATOIRE R&D', verb: 'CONÇOIT & FABRIQUE', tv: WT('methode', 'conçoit'), col: C.orange, paw: false },
+  ];
+  boxes.forEach((b, i) => {
+    const k = eExpo(P(t, b.t0, .8)); if (k <= 0) return;
+    const y = 430 + (1 - k) * 80;
+    ctx.save(); ctx.globalAlpha = clamp(k);
+    ctx.fillStyle = 'rgba(12,34,20,0.9)'; rr(b.x, y, 540, 380, 18); ctx.fill();
+    ctx.strokeStyle = b.col; ctx.lineWidth = 2; ctx.globalAlpha *= .6; ctx.stroke(); ctx.globalAlpha = clamp(k);
+    if (b.paw) emblem(b.x + 90, y + 95, 46, 1, 1); else {
+      ctx.strokeStyle = C.orange; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(b.x + 90, y + 95, 46, 0, Math.PI * 2); ctx.stroke();
+      // flask icon
+      ctx.beginPath(); ctx.moveTo(b.x + 80, y + 68); ctx.lineTo(b.x + 80, y + 90); ctx.lineTo(b.x + 64, y + 120); ctx.lineTo(b.x + 116, y + 120); ctx.lineTo(b.x + 100, y + 90); ctx.lineTo(b.x + 100, y + 68); ctx.stroke();
+      ctx.fillStyle = C.orange; ctx.globalAlpha *= .7; ctx.beginPath(); ctx.moveTo(b.x + 70, y + 110); ctx.lineTo(b.x + 110, y + 110); ctx.lineTo(b.x + 116, y + 120); ctx.lineTo(b.x + 64, y + 120); ctx.fill(); ctx.globalAlpha = clamp(k);
+    }
+    txt(b.name, b.x + 170, y + 92, { size: 46, w: 700, color: C.cream });
+    txt(b.role, b.x + 172, y + 128, { size: 18, w: 800, ls: 5, color: b.col });
+    bar(b.x + 40, y + 190, 460, 1, 'rgba(175,193,139,0.25)');
+    rise(b.verb, b.x + 40, y + 290, t, b.tv - .1, { f: 'A', size: 64, color: b.col });
+    rise(i ? 'R&D · innovation · exécution numérique' : 'Vision · stratégie · portefeuille de projets', b.x + 42, y + 340, t, b.tv + .1, { size: 22, w: 500, color: C.light });
+    ctx.restore();
+  });
+  // link between boxes with flowing dots
+  const lk = eIO(P(t, tY - .3, .6));
+  if (lk > 0) {
+    const y = 620; line(840, y, 840 + 240 * lk, y, C.light, 2, .5);
+    for (let k = 0; k < 5; k++) { const u = (t * .7 + k / 5) % 1; if (u < lk) { ctx.fillStyle = k % 2 ? C.orange : C.lime; ctx.beginPath(); ctx.arc(840 + 240 * u, y, 5, 0, Math.PI * 2); ctx.fill(); } }
+  }
+};
+
+// 6 — TERRAIN -------------------------------------------------------------
+S.terrain = (t, sc) => {
+  chapter(t, sc, '04', 'SUR LE TERRAIN');
+  const ts = [WT('terrain', 'systèmes') - .3, WT('terrain', 'super') - .3, WT('terrain', 'digitalisation') - .3, WT('terrain', 'vidéosurveillance') - .3, WT('terrain', 'clara') - .3, sc.end];
+  // opener
+  if (t < ts[0] + .3) {
+    const out = ts[0] - .35;
+    const mx = 1400, my = 560;
+    ctx.save(); ctx.globalAlpha = 1 - eIn(P(t, out, .4));
+    drawAfrica(t, mx, my, 760, P(t, sc.start, 1.2), { alpha: .7 });
+    const [kx, ky] = proj(...CITIES.kin, mx, my, 760);
+    cityPin(kx, ky, t, 1, C.orange, 8);
+    ['lub', 'dla', 'lbv', 'lad', 'kgl'].forEach((c, i) => { const [x, y] = proj(...CITIES[c], mx, my, 760); arcLink(kx, ky, x, y, eIO(P(t, sc.start + .6 + i * .2, .8)), C.lime, 2, .3); cityPin(x, y, t + i, eOut(P(t, sc.start + 1.2 + i * .2, .3)), C.lime, 5); });
+    ctx.restore();
+    rise('SUR LE TERRAIN.', 140, 470, t, WT('terrain', 'sur') - .1, { f: 'A', size: 120, color: C.cream, out });
+    rise('Aux côtés des', 144, 560, t, WT('terrain', 'accompagnons') - .2, { f: 'B', size: 44, color: C.light, out });
+    rise('ÉTATS', 144, 660, t, WT('terrain', 'états') - .1, { f: 'A', size: 84, color: C.lime, out });
+    rise('& ENTREPRISES', 144 + measure('ÉTATS ', { f: 'A', size: 84 }), 660, t, WT('terrain', 'entreprises') - .1, { f: 'A', size: 84, color: C.orange, out });
+  }
+  const panels = [footID, footApp, footDiaspora, footCCTV, footClara];
+  const labels = [['IDENTIFICATION SÉCURISÉE', 'BIOMÉTRIE · SÛRETÉ CRITIQUE'], ['SUPER-APP DE GESTION DE CHANTIERS', 'SUIVI TERRAIN EN TEMPS RÉEL'], ['PLATEFORMES POUR LA DIASPORA', 'ENTREPRENEURIAT · IMMOBILIER'], ['VIDÉO-SURVEILLANCE ASSISTÉE PAR IA', 'DÉTECTION · RECONNAISSANCE'], null];
+  for (let i = 0; i < 5; i++) {
+    const a = ts[i], b = ts[i + 1];
+    if (t < a - .05 || t > b + .4) continue;
+    // whip-pan in
+    const kin = eExpo(P(t, a, .55)), kout = eIn(P(t, b - .05, .4));
+    ctx.save();
+    ctx.translate((1 - kin) * W * .6 - kout * W * .6, 0);
+    ctx.globalAlpha = clamp(kin * 1.5) * (1 - kout);
+    panels[i](t - a, t, b - a);
+    ctx.restore();
+    if (labels[i]) lowerThird(t, a + .35, b - .05, labels[i][0], labels[i][1]);
+  }
+};
+// "footage" frames
+function hud(x, y, w, h, col = C.lime) {
+  ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 3; const L = 40;
+  [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([a, b, sx, sy]) => { ctx.beginPath(); ctx.moveTo(a, b + sy * L); ctx.lineTo(a, b); ctx.lineTo(a + sx * L, b); ctx.stroke(); });
+  ctx.restore();
+}
+function scanlines(a = .06) { ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = '#000'; for (let y = 0; y < H; y += 4) ctx.fillRect(0, y, W, 2); ctx.restore(); }
+function footID(lt, t) {
+  ctx.fillStyle = '#081710'; ctx.fillRect(0, 0, W, H);
+  // ID card
+  const cx = 600, cy = 470;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.05 + lt * .01);
+  ctx.fillStyle = '#F2EFE6'; rr(-330, -210, 660, 420, 22); ctx.fill();
+  ctx.fillStyle = C.green; rr(-330, -210, 660, 80, [22, 22, 0, 0]); ctx.fill();
+  txt('CARTE D\'IDENTIFICATION SÉCURISÉE', -300, -158, { size: 22, w: 800, ls: 2, color: '#fff' });
+  ctx.fillStyle = '#C9D3B8'; rr(-300, -100, 190, 240, 10); ctx.fill();
+  icon('user', -205, 20, 150, C.green, t);
+  for (let l = 0; l < 5; l++) { bar(-80, -80 + l * 46, 300 - l * 30, 14, l ? '#B9B6AC' : '#5c5c5c'); }
+  // chip
+  ctx.fillStyle = C.orange; rr(220, 70, 70, 54, 8); ctx.fill();
+  // QR-ish
+  for (let qx = 0; qx < 9; qx++) for (let qy = 0; qy < 9; qy++) if (hash(qx * 13 + qy * 7) > .5) bar(130 + qx * 9, 60 + qy * 9, 8, 8, '#2d2d2d');
+  ctx.restore();
+  // fingerprint scanner on right
+  const fx = 1350, fy = 470;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(139,195,74,0.25)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(fx, fy, 240, 0, Math.PI * 2); ctx.stroke();
+  for (let r = 20; r < 190; r += 16) {
+    ctx.strokeStyle = C.lime; ctx.lineWidth = 4; ctx.globalAlpha = .85;
+    ctx.beginPath(); ctx.ellipse(fx, fy + 10, r * .75, r, 0, Math.PI * (1.05 + hash(r) * .2), Math.PI * (2.95 - hash(r + 1) * .3)); ctx.stroke();
+  }
+  const sy = fy - 200 + ((lt * 1.2) % 1) * 400;
+  ctx.globalAlpha = 1; ctx.fillStyle = C.orange; ctx.shadowColor = C.orange; ctx.shadowBlur = 25; ctx.fillRect(fx - 230, sy, 460, 4);
+  ctx.restore();
+  hud(1080, 200, 540, 560);
+  const ok = lt > 1.4;
+  txt(ok ? 'IDENTITÉ VÉRIFIÉE ✓' : 'ANALYSE BIOMÉTRIQUE…', 1350, 820, { size: 28, w: 800, ls: 3, color: ok ? C.lime : C.cream, align: 'center' });
+  txt('MATCH ' + Math.min(99.7, (lt * 70)).toFixed(1) + '%', 1350, 170, { size: 22, w: 700, ls: 4, color: C.light, align: 'center' });
+  scanlines(.05);
+}
+function phone(x, y, w, h, drawScreen) {
+  ctx.save();
+  ctx.fillStyle = '#0d0d0d'; rr(x, y, w, h, 48); ctx.fill();
+  ctx.strokeStyle = '#3a3a3a'; ctx.lineWidth = 4; ctx.stroke();
+  ctx.save(); rr(x + 16, y + 16, w - 32, h - 32, 36); ctx.clip(); drawScreen(x + 16, y + 16, w - 32, h - 32); ctx.restore();
+  ctx.fillStyle = '#0d0d0d'; rr(x + w / 2 - 60, y + 22, 120, 28, 14); ctx.fill();
+  ctx.restore();
+}
+function footApp(lt, t) {
+  ctx.fillStyle = '#0B2215'; ctx.fillRect(0, 0, W, H);
+  // construction skyline (line art) right
+  ctx.save(); ctx.strokeStyle = C.light; ctx.lineWidth = 3; ctx.globalAlpha = .8;
+  const gx = 1050, gy = 780;
+  line(950, gy, 1800, gy, C.light, 3);
+  // crane
+  ctx.beginPath(); ctx.moveTo(1180, gy); ctx.lineTo(1180, 260); ctx.lineTo(1690, 260); ctx.moveTo(1100, 260); ctx.lineTo(1180, 260); ctx.moveTo(1180, 300); ctx.lineTo(1690, 260); ctx.moveTo(1180, 220); ctx.lineTo(1180, 260); ctx.stroke();
+  for (let k = 0; k < 14; k++) { ctx.beginPath(); ctx.moveTo(1180 - 14, gy - k * 37); ctx.lineTo(1180 + 14, gy - k * 37 - 37); ctx.stroke(); }
+  const hx = 1300 + 280 * (.5 + .5 * Math.sin(lt * 1.2));
+  ctx.beginPath(); ctx.moveTo(hx, 262); ctx.lineTo(hx, 470); ctx.stroke();
+  ctx.fillStyle = C.orange; ctx.fillRect(hx - 40, 470, 80, 30);
+  // building rising
+  const floors = Math.floor(2 + lt * 2.2);
+  for (let f = 0; f < Math.min(floors, 8); f++) { ctx.strokeRect(1380, gy - (f + 1) * 48, 300, 48); for (let wnd = 0; wnd < 5; wnd++) bar(1398 + wnd * 58, gy - (f + 1) * 48 + 14, 34, 20, f === floors - 1 ? C.orange : 'rgba(139,195,74,0.4)'); }
+  ctx.restore();
+  // phone with app
+  phone(400, 70, 400, 740, (x, y, w, h) => {
+    ctx.fillStyle = '#F4F2EC'; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = C.green; ctx.fillRect(x, y, w, 150);
+    txt('Mes chantiers', x + 30, y + 110, { size: 32, w: 800, color: '#fff' });
+    // map
+    ctx.fillStyle = '#DDE5CF'; ctx.fillRect(x + 20, y + 170, w - 40, 250);
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(x + 20, y + 330); ctx.bezierCurveTo(x + 150, y + 250, x + 250, y + 380, x + w - 20, y + 220); ctx.stroke();
+    [[.25, .45], [.6, .3], [.8, .7], [.4, .8]].forEach(([u, v], k) => { const px = x + 20 + u * (w - 40), py = y + 170 + v * 250; cityPin(px, py, t + k, 1, k === 1 ? C.orange : C.green, 8); });
+    const items = [['Route Nationale 1', .82], ['Pont de la Lukaya', .64], ['Logements sociaux', .41], ['Réseau électrique', .9]];
+    const scroll = Math.min(lt * 30, 60);
+    items.forEach(([n, p], k) => {
+      const yy = y + 450 + k * 105 - scroll;
+      ctx.fillStyle = '#fff'; rr(x + 20, yy, w - 40, 90, 14); ctx.fill();
+      txt(n, x + 40, yy + 36, { size: 20, w: 700, color: '#2b2b2b' });
+      bar(x + 40, yy + 56, w - 120, 10, '#E3E3DA');
+      bar(x + 40, yy + 56, (w - 120) * p * eOut(clamp(lt / 1.2)), 10, k === 1 ? C.orange : C.green);
+      txt(Math.round(p * 100 * eOut(clamp(lt / 1.2))) + '%', x + w - 40, yy + 36, { size: 18, w: 800, color: C.green, align: 'right' });
+    });
+  });
+}
+function footDiaspora(lt, t) {
+  ctx.fillStyle = '#081A10'; ctx.fillRect(0, 0, W, H);
+  // globe
+  const gx = 700, gy = 520, R = 360;
+  ctx.save();
+  const g = ctx.createRadialGradient(gx - 100, gy - 120, 50, gx, gy, R); g.addColorStop(0, '#1F4A2D'); g.addColorStop(1, '#0B2214');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(gx, gy, R, 0, Math.PI * 2); ctx.fill();
+  ctx.clip();
+  ctx.strokeStyle = 'rgba(175,193,139,0.18)'; ctx.lineWidth = 1.5;
+  for (let k = -3; k <= 3; k++) { ctx.beginPath(); ctx.ellipse(gx, gy + k * R / 4, R * Math.sqrt(1 - (k / 4) ** 2), 8, 0, 0, Math.PI * 2); ctx.stroke(); }
+  for (let k = 0; k < 8; k++) { const ph = (k / 8 * Math.PI + lt * .15) % Math.PI; ctx.beginPath(); ctx.ellipse(gx, gy, R * Math.abs(Math.cos(ph)), R, 0, 0, Math.PI * 2); ctx.stroke(); }
+  // africa + europe dots on globe
+  AFR_DOTS.forEach(([lon, lat], i) => { if (i % 2) return; const x = gx + (lon - 15 - lt * 2) * 6.4, y = gy - (lat - 5) * 6.4; ctx.fillStyle = C.green; ctx.globalAlpha = .8; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, Math.PI * 2); ctx.fill(); });
+  ctx.restore();
+  ctx.strokeStyle = C.lime; ctx.globalAlpha = .4; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(gx, gy, R, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+  const kin = [gx + (15.3 - 15 - lt * 2) * 6.4, gy - (-4.3 - 5) * 6.4];
+  const cities = [[gx + (2.3 - 15 - lt * 2) * 6.4, gy - (48.8 - 5) * 6.4, 'Paris'], [gx + (4.4 - 15 - lt * 2) * 6.4, gy - (50.8 - 5) * 6.4, 'Bruxelles'], [gx - 330, gy - 250, 'Montréal'], [gx + 250, gy - 300, 'Londres']];
+  cities.forEach(([x, y, n], k) => { arcLink(x, y, kin[0], kin[1], eIO(clamp((lt - k * .25) / .9)), k % 2 ? C.orange : C.lime, 2.5, .3); cityPin(x, y, t + k, 1, C.lime, 5); txt(n, x + 12, y - 10, { size: 18, w: 700, color: C.light }); });
+  cityPin(kin[0], kin[1], t, 1, C.orange, 8);
+  // dashboard cards right
+  const cards = [['Entrepreneuriat', 'Création & suivi d\'entreprises', C.lime], ['Immobilier', 'Gestion de biens à distance', C.orange], ['Services', 'Démarches 100 % digitalisées', C.light]];
+  cards.forEach(([a, b, col], k) => {
+    const kk = eExpo(clamp((lt - .3 - k * .25) / .6)); if (kk <= 0) return;
+    const x = 1180 + (1 - kk) * 200, y = 260 + k * 170;
+    ctx.save(); ctx.globalAlpha = kk;
+    ctx.fillStyle = 'rgba(16,44,26,0.92)'; rr(x, y, 560, 140, 16); ctx.fill();
+    bar(x, y, 8, 140, col);
+    txt(a, x + 40, y + 62, { size: 36, w: 800, color: C.cream });
+    txt(b, x + 40, y + 104, { size: 22, w: 500, color: C.light });
+    ctx.restore();
+  });
+}
+function footCCTV(lt, t) {
+  ctx.fillStyle = '#0a0f0b'; ctx.fillRect(0, 0, W, H);
+  // perspective street grid
+  ctx.save(); ctx.strokeStyle = 'rgba(175,193,139,0.18)'; ctx.lineWidth = 2;
+  const vx = W / 2, vy = 330;
+  for (let k = -12; k <= 12; k++) { ctx.beginPath(); ctx.moveTo(vx, vy); ctx.lineTo(vx + k * 260, H); ctx.stroke(); }
+  for (let k = 0; k < 14; k++) { const z = ((k + lt * 1.2) % 14) / 14; const y = vy + Math.pow(z, 2.2) * (H - vy); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  // buildings silhouettes
+  ctx.fillStyle = '#0f1d13';
+  for (let k = 0; k < 9; k++) { const bh = 120 + hash(k) * 230; ctx.fillRect(k * 220 - 20, vy - bh, 200, bh); }
+  ctx.restore();
+  // walkers
+  const ppl = [[.3, .4, 1], [.55, .7, -1], [.72, .5, 1], [.42, .85, -1]];
+  ppl.forEach(([x0, z, dir], k) => {
+    const x = W * x0 + dir * lt * 60, y = vy + Math.pow(z, 2.2) * (H - vy - 60) + 30, s = .5 + z * 1.1;
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    ctx.fillStyle = '#4e5a50'; ctx.beginPath(); ctx.arc(0, -150, 22, 0, Math.PI * 2); ctx.fill(); rr(-30, -125, 60, 110, 20); ctx.fill();
+    const sw = Math.sin(lt * 8 + k) * 10; ctx.fillRect(-22 + sw * .5, -20, 16, 60); ctx.fillRect(6 - sw * .5, -20, 16, 60);
+    ctx.restore();
+    const bw = 110 * s, bh = 230 * s;
+    const det = eOut(clamp((lt - .2 - k * .2) / .3));
+    if (det > 0) {
+      ctx.save(); ctx.globalAlpha = det; ctx.strokeStyle = k === 1 ? C.orange : C.lime; ctx.lineWidth = 3;
+      ctx.strokeRect(x - bw / 2, y - bh + 30 * s, bw, bh);
+      ctx.fillStyle = k === 1 ? C.orange : C.lime; ctx.fillRect(x - bw / 2, y - bh + 30 * s - 30, Math.max(bw, 170), 30);
+      txt((k === 1 ? 'ID #A-27 ' : 'PERSONNE ') + (94 + k).toFixed(0) + '%', x - bw / 2 + 8, y - bh + 30 * s - 8, { size: 18, w: 800, color: '#0a1a10' });
+      ctx.restore();
+    }
+  });
+  scanlines(.12);
+  hud(60, 60, W - 120, H - 120, C.light);
+  ctx.fillStyle = '#e53935'; if (Math.floor(t * 2) % 2 === 0) { ctx.beginPath(); ctx.arc(120, 130, 12, 0, Math.PI * 2); ctx.fill(); }
+  txt('REC', 145, 140, { size: 28, w: 800, color: C.cream });
+  txt('CAM 04 · IA ACTIVE', W - 110, 140, { size: 24, w: 700, ls: 3, color: C.lime, align: 'right' });
+  const sec = 37 + Math.floor(lt);
+  txt('2025-11-14  21:42:' + String(sec).padStart(2, '0'), W - 110, 180, { size: 22, w: 600, ls: 2, color: C.light, align: 'right' });
+}
+function footClara(lt, t) {
+  ctx.fillStyle = '#071510'; ctx.fillRect(0, 0, W, H);
+  const cx = W / 2, cy = 470;
+  // neural core
+  for (let k = 0; k < 3; k++) { ctx.save(); ctx.strokeStyle = k === 1 ? C.orange : C.lime; ctx.globalAlpha = .5; ctx.lineWidth = 2; ctx.translate(cx, cy); ctx.rotate(lt * (k + 1) * .4 * (k % 2 ? -1 : 1)); ctx.setLineDash([20, 14]); ctx.beginPath(); ctx.arc(0, 0, 120 + k * 40, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+  const g = ctx.createRadialGradient(cx, cy, 10, cx, cy, 110); g.addColorStop(0, 'rgba(139,195,74,0.9)'); g.addColorStop(1, 'rgba(139,195,74,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, 110, 0, Math.PI * 2); ctx.fill();
+  txt('CLARA', cx, cy + 6, { f: 'A', size: 76, color: C.cream, align: 'center', glow: C.lime });
+  txt('AI', cx, cy + 62, { f: 'A', size: 40, color: C.orange, align: 'center' });
+  // CV cards streaming in from left → sorted right
+  for (let k = 0; k < 40; k++) {
+    const u = (lt * (.55 + lt * .25) + hash(k)) % 1;
+    const lane = Math.floor(hash(k + 3) * 5);
+    let x, y;
+    if (u < .5) { const v = u / .5; x = lerp(-120, cx - 150, eIn(v)); y = lerp(220 + lane * 120, cy, eIn(v)); }
+    else { const v = (u - .5) / .5; const good = hash(k + 7) > .55; x = lerp(cx + 150, W + 120, eOut(v)); y = lerp(cy, good ? 300 + lane * 25 : 640 + lane * 25, eOut(v)); }
+    ctx.save(); ctx.globalAlpha = Math.sin(u * Math.PI) * .95; ctx.translate(x, y);
+    ctx.fillStyle = '#F2EFE6'; rr(-40, -52, 80, 104, 6); ctx.fill();
+    ctx.fillStyle = C.green; ctx.beginPath(); ctx.arc(0, -26, 12, 0, Math.PI * 2); ctx.fill();
+    for (let l = 0; l < 3; l++) bar(-28, -4 + l * 14, 56 - l * 10, 6, '#b5b2a8');
+    if (u > .5) { ctx.fillStyle = hash(k + 7) > .55 ? C.lime : C.orange; ctx.beginPath(); ctx.arc(30, -42, 11, 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore();
+  }
+  txt('PROFILS RETENUS', W - 160, 260, { size: 20, w: 800, ls: 4, color: C.lime, align: 'right' });
+  txt('ANALYSE SÉMANTIQUE · PRÉDICTIVE · NEURONALE', cx, 760, { size: 22, w: 700, ls: 5, color: C.light, align: 'center' });
+  // counter
+  const tm = WT('terrain', 'million') - (TL._terrainClaraStart);
+  const n = Math.round(1000000 * eOut(clamp((lt - (tm - 1.6)) / 1.7)));
+  const s = n.toLocaleString('fr-FR').replace(/ | /g, ' ');
+  txt(s, cx, 900, { f: 'A', size: 120, color: C.cream, align: 'center', alpha: eOut(clamp((lt - (tm - 1.8)) / .3)) });
+  rise('CV PAR MINUTE', cx, 960, t, WT('terrain', 'cv') - .15, { size: 30, w: 800, ls: 10, color: C.orange, align: 'center' });
+}
+
+// 7 — IMPACT --------------------------------------------------------------
+S.impact = (t, sc) => {
+  chapter(t, sc, '05', 'IMPACT 2025');
+  const t25 = WT('impact', '2025');
+  // giant outlined 2025
+  const k = eExpo(P(t, t25 - .2, 1));
+  ctx.save(); ctx.globalAlpha = .16 * k * (1 - eIn(P(t, sc.end - .4, .4)));
+  txt('2025', W / 2 + (1 - k) * 200, 760, { f: 'A', size: 640, stroke: C.lime, lw: 3, align: 'center' });
+  ctx.restore();
+  rise('EN 2025', 140, 250, t, t25 - .15, { f: 'A', size: 56, color: C.orange });
+  const stats = [
+    { v: 26, suf: '', a: 'PROJETS', b: 'STRUCTURANTS', t: WT('impact', 'vingt-six') },
+    { v: 12, suf: '', a: 'PAYS', b: 'PARTENAIRES', t: WT('impact', 'douze') },
+    { v: 150, suf: '+', a: 'SOLUTIONS', b: 'TECHNOLOGIQUES', t: WT('impact', 'plus') },
+    { v: 85, suf: '%', a: "D'EXPERTISE", b: 'LOCALE', t: WT('impact', 'quatre-vingt-cinq') },
+  ];
+  stats.forEach((s, i) => {
+    const x = 140 + (i % 2) * 470, y = 330 + Math.floor(i / 2) * 290;
+    const kk = eExpo(P(t, s.t - .25, .7)); if (kk <= 0) return;
+    ctx.save(); ctx.globalAlpha = clamp(kk);
+    ctx.fillStyle = 'rgba(12,34,20,0.85)'; rr(x, y + (1 - kk) * 40, 440, 260, 16); ctx.fill();
+    bar(x, y + (1 - kk) * 40, 6, 260, i % 2 ? C.orange : C.lime);
+    const n = Math.round(s.v * eOut(P(t, s.t - .2, 1.1)));
+    txt(n + s.suf, x + 40, y + 150 + (1 - kk) * 40, { f: 'A', size: 130, color: i % 2 ? C.orange : C.lime });
+    txt(s.a, x + 40, y + 200 + (1 - kk) * 40, { size: 24, w: 800, ls: 4, color: C.cream });
+    txt(s.b, x + 40, y + 232 + (1 - kk) * 40, { size: 24, w: 500, ls: 4, color: C.light });
+    ctx.restore();
+  });
+  // right: annual report cover then 90% ring
+  const t90 = WT('impact', 'quatre-vingt-dix');
+  const rc = IMG.report;
+  const ra = io(t, t25 - .1, t90 + .1, .6, .45);
+  if (rc && ra > 0) {
+    const kk = eExpo(P(t, t25 - .1, 1));
+    ctx.save(); ctx.globalAlpha = ra; ctx.translate(1450, 560 + (1 - kk) * 120); ctx.rotate(.06 - .03 * P(t, t25, 9));
+    ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 20;
+    const hh = 640, ww = hh * rc.width / rc.height;
+    ctx.drawImage(rc, -ww / 2, -hh / 2, ww, hh);
+    ctx.restore();
+    rise('RAPPORT ANNUEL 2025', 1450, 950, t, t25 + .3, { size: 22, w: 800, ls: 6, color: C.light, align: 'center', out: t90 - .3 });
+  }
+  const gk = eOut(P(t, t90 - .1, 1.3));
+  if (t > t90 - .2) {
+    const gx = 1460, gy = 560, R = 250;
+    const a = io(t, t90 - .2, sc.end, .4, .35);
+    ctx.save(); ctx.globalAlpha = a;
+    ctx.lineWidth = 34; ctx.strokeStyle = 'rgba(175,193,139,0.15)'; ctx.beginPath(); ctx.arc(gx, gy, R, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = C.lime; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(gx, gy, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * .9 * gk); ctx.stroke();
+    txt(Math.round(90 * gk) + '%', gx, gy + 50, { f: 'A', size: 170, color: C.cream, align: 'center' });
+    ctx.restore();
+    rise('DE NOS PARTENAIRES', gx, gy + R + 90, t, WT('impact', 'partenaires', 0) - .1, { size: 24, w: 800, ls: 5, color: C.light, align: 'center' });
+    rise('RENOUVELLENT LEUR CONFIANCE', gx, gy + R + 130, t, WT('impact', 'renouvellent') - .1, { size: 24, w: 800, ls: 5, color: C.orange, align: 'center' });
+  }
+};
+
+// 8 — VALEURS -------------------------------------------------------------
+S.valeurs = (t, sc) => {
+  chapter(t, sc, '06', 'NOS VALEURS');
+  const tN = WT('valeurs', 'nous');
+  const vals = [['RIGUEUR.', WT('valeurs', 'rigueur'), C.cream], ['INTÉGRITÉ.', WT('valeurs', 'intégrité'), C.lime], ['SOUVERAINETÉ AFRICAINE.', WT('valeurs', 'souveraineté'), C.orange]];
+  const out = tN - .25;
+  vals.forEach(([w, ti, col], i) => {
+    if (t > out + .6) return;
+    const k = eOut(P(t, ti - .08, .35));
+    if (k <= 0) return;
+    const sh = (1 - P(t, ti, .25)) * 10 * Math.sin(t * 90);
+    const s = lerp(1.6, 1, k);
+    const o = eIn(P(t, out, .45));
+    ctx.save(); ctx.globalAlpha = k * (1 - o); ctx.translate(W / 2 + sh, 400 + i * 170 - o * 120); ctx.scale(s, s);
+    txt(w, 0, 0, { f: 'A', size: i === 2 ? 130 : 160, color: col, align: 'center' });
+    ctx.restore();
+  });
+  // humain au coeur
+  const tH = WT('valeurs', "l'humain");
+  const hk = eBack(P(t, tH - .3, .7));
+  const ta = WT('valeurs', 'afrique');
+  const mv = eIO(P(t, ta - .4, .9));
+  if (hk > 0) {
+    const hx = lerp(W / 2, 560, mv), hy = lerp(470, 520, mv);
+    ctx.save(); ctx.globalAlpha = clamp(hk) * (1 - eIn(P(t, sc.end - .35, .35)));
+    // orbiting data nodes
+    for (let k = 0; k < 10; k++) {
+      const a = k / 10 * Math.PI * 2 + t * .5, r = 190 + (k % 2) * 50;
+      const x = hx + Math.cos(a) * r * hk, y = hy + Math.sin(a) * r * .55 * hk;
+      line(hx, hy, x, y, C.green, 1.5, .4);
+      ctx.fillStyle = k % 3 ? C.lime : C.orange; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = C.bg1; ctx.beginPath(); ctx.arc(hx, hy, 110 * hk, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = C.lime; ctx.lineWidth = 4; ctx.stroke();
+    icon('user', hx, hy + 10, 130 * hk, C.cream, t);
+    ctx.restore();
+    const tx = lerp(W / 2, 1180, mv), al = mv > .5 ? 'center' : 'center';
+    rise("L'HUMAIN", W / 2, 700, t, tH - .1, { f: 'A', size: 96, color: C.cream, align: 'center', out: ta - .5 });
+    rise('au cœur de la transformation numérique', W / 2, 770, t, WT('valeurs', 'cœur') - .1, { f: 'B', size: 44, color: C.light, align: 'center', out: ta - .45 });
+  }
+  if (mv > 0) {
+    const tx = 1180;
+    rise('UNE AFRIQUE', tx, 470, t, ta - .1, { f: 'A', size: 64, color: C.cream, align: 'center', out: sc.end - .35 });
+    rise('STRUCTURÉE · COMPÉTITIVE', tx, 540, t, WT('valeurs', 'structurée') - .1, { size: 34, w: 800, ls: 6, color: C.lime, align: 'center', out: sc.end - .35 });
+    const tz = WT('valeurs', "l'horizon");
+    rise("À L'HORIZON", tx, 640, t, tz - .1, { size: 26, w: 800, ls: 10, color: C.light, align: 'center', out: sc.end - .35 });
+    const yk = eOut(P(t, WT('valeurs', '2050') - .5, 1.0));
+    if (yk > 0) {
+      const yr = Math.round(lerp(2025, 2050, yk));
+      ctx.save(); ctx.globalAlpha = 1 - eIn(P(t, sc.end - .35, .35));
+      txt(String(yr), tx, 840, { f: 'A', size: 210, color: C.orange, align: 'center', glow: 'rgba(232,144,42,0.5)', glowB: 40 });
+      ctx.restore();
+    }
+  }
+};
+
+// 9 — LOGO ----------------------------------------------------------------
+S.logo = (t, sc) => {
+  const t0 = sc.start + .35;
+  // light burst
+  const fl = Math.max(0, 1 - Math.abs(t - t0) / .25);
+  ctx.save(); ctx.translate(W / 2, 400); ctx.rotate(t * .08);
+  for (let i = 0; i < 24; i++) { ctx.rotate(Math.PI / 12); ctx.globalAlpha = .05 + .05 * Math.sin(i); ctx.fillStyle = i % 2 ? C.lime : C.orange; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(1400, -30); ctx.lineTo(1400, 30); ctx.fill(); }
+  ctx.restore();
+  const k = P(t, t0 - .25, 1.2);
+  emblem(W / 2, 380, 170, k, 1);
+  const wk = eExpo(P(t, WT('logo', 'mboma') - .1, .8));
+  ctx.save(); ctx.globalAlpha = wk;
+  const s1 = 'MboMa', s2 = ' & Co.';
+  const w1 = measure(s1, { size: 110, w: 600 }), w2 = measure(s2, { size: 90, w: 500 });
+  const x0 = W / 2 - (w1 + w2) / 2;
+  txt(s1, x0, 690 + (1 - wk) * 40, { size: 110, w: 600, color: C.lime });
+  txt(s2, x0 + w1, 690 + (1 - wk) * 40, { size: 90, w: 500, color: C.cream });
+  ctx.restore();
+  rise('ÉLEVER LES STANDARDS.', W / 2 - 20, 820, t, WT('logo', 'élevez') - .1, { f: 'A', size: 72, color: C.cream, align: 'right' });
+  rise("CRÉER L'IMPACT.", W / 2 + 20, 820, t, WT('logo', 'créez') - .1, { f: 'A', size: 72, color: C.orange, align: 'left' });
+  ctx.save(); ctx.globalAlpha = fl; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.restore();
+};
+
+// 10 — TRACE + END CARD ----------------------------------------------------
+S.trace = (t, sc) => drawTrace(t, sc.start, false);
+S.endcard = (t, sc) => drawTrace(t, TL.scenes.find(s => s.id === 'trace').start, true);
+function drawTrace(t, t0, end) {
+  // paw-print trail walking across the screen
+  const n = 14;
+  for (let i = 0; i < n; i++) {
+    const ti = t0 + .2 + i * .22;
+    const a = eOut(P(t, ti, .3)) * (1 - .6 * P(t, ti + 1.5, 2.5));
+    if (a <= 0) continue;
+    const x = 120 + i * 130, y = 900 + (i % 2 ? -40 : 40) - i * 6;
+    drawPaw(x, y, 70, i % 4 === 3 ? C.orange : C.lime, a * .85, Math.PI / 2 + (i % 2 ? .12 : -.12));
+  }
+  const fadeQ = end ? eIn(P(t, TL.scenes.find(s => s.id === 'endcard').start - .1, .5)) : 0;
+  ctx.save(); ctx.globalAlpha = 1 - fadeQ;
+  rise('Nous ne faisons pas du bruit.', W / 2, 420, t, WT('trace', 'nous') - .1, { f: 'B', size: 74, color: C.cream, align: 'center' });
+  rise('Nous laissons une trace.', W / 2, 540, t, WT('trace', 'nous', 1) - .1, { f: 'B', size: 74, color: C.orange, align: 'center' });
+  ctx.restore();
+  if (end) {
+    const te = TL.scenes.find(s => s.id === 'endcard').start;
+    const k = P(t, te + .1, 1.1);
+    emblem(W / 2 - 330, 420, 120, k, 1);
+    bar(W / 2 - 170, 420 - 90 * eExpo(k), 4, 180 * eExpo(k), C.orange);
+    ctx.save(); ctx.globalAlpha = eExpo(P(t, te + .4, .8));
+    txt('MboMa', W / 2 - 130, 455, { size: 104, w: 600, color: C.lime });
+    txt('& Co.', W / 2 - 130 + measure('MboMa ', { size: 104, w: 600 }), 455, { size: 84, w: 500, color: C.cream });
+    ctx.restore();
+    rise('ÉLEVER LES STANDARDS. CRÉER L\'IMPACT.', W / 2, 610, t, te + .6, { size: 26, w: 800, ls: 8, color: C.light, align: 'center' });
+    rise('www.mboma.org', W / 2, 700, t, te + .8, { size: 48, w: 700, color: C.cream, align: 'center' });
+    rise('BRAZZAVILLE  ·  KINSHASA  ·  PARIS', W / 2, 760, t, te + 1, { size: 22, w: 700, ls: 8, color: C.orange, align: 'center' });
+  }
+}
+
+// =====================================================================
+function renderFrame(t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1; ctx.filter = 'none';
+  background(t);
+  // find scene (render previous one too during its exit overlap is handled by wipe)
+  const sc = TL.scenes.find(s => t >= s.start && t < s.end) || TL.scenes[TL.scenes.length - 1];
+  ctx.save(); S[sc.id](t, sc); ctx.restore();
+  bug(t);
+  // transitions
+  TL.scenes.forEach((s, i) => { if (i > 0 && !['endcard', 'trace', 'logo'].includes(s.id)) wipe(t, s.start); });
+  postFX(t);
+  // opening fade-in & closing fade-out
+  const fin = 1 - P(t, 0, .8), fout = P(t, TL.total - .9, .9);
+  const f = Math.max(fin, fout);
+  if (f > 0) { ctx.fillStyle = `rgba(0,0,0,${f})`; ctx.fillRect(0, 0, W, H); }
+}
+
+window.init = async (tl) => {
+  TL = tl;
+  TL._terrainClaraStart = WT('terrain', 'clara') - .3;
+  buildAfrica(); buildGrain();
+  await Promise.all([loadImg('founder', 'assets/founder.jpg'), loadImg('report', 'assets/report_cover-01.png')]);
+  await Promise.all(['40px Anton', 'italic 40px Bask', '400 40px Mont', '500 40px Mont', '600 40px Mont', '700 40px Mont', '800 40px Mont'].map(f => document.fonts.load(f, 'ÉàçMboMa')));
+  return { dots: AFR_DOTS.length, fonts: document.fonts.size };
+};
+window.renderFrame = renderFrame;
+window.grab = (t, q) => { renderFrame(t); return cv.toDataURL('image/jpeg', q || 0.93); };
+</script>
+</body>
+</html>

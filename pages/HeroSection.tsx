@@ -1,34 +1,88 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { VALUES, EXPERTISES, IMPACT_METRICS, SECTORS, STRATEGIC_PARTNERSHIPS, FLAGSHIP_PROJECTS, GOVERNANCE_PRINCIPLES, INNOVATION_LABS, CONTINENTAL_PRESENCE, THOUGHT_LEADERSHIP, BRAND_SLOGAN, VISION_STATEMENT, CORE_VALUES_BRIEF, INTERVENTION_DOMAINS, ANNUAL_REPORTS, AUDIT_CAMPAIGN } from '../constants';
 import DataProcessingTerminal from '../components/DataProcessingTerminal';
 import ExpertiseCards from '../components/ExpertiseCards';
+import { BannerVideo, ProfileVideoModal, ProfileVideoPlayer, useIsMobileViewport } from '../components/ProfileVideo';
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
+  const [filmOpen, setFilmOpen] = useState(false);
+  const [bannerMuted, setBannerMuted] = useState(true);
+  const isMobile = useIsMobileViewport();
+  const bannerRef = useRef<HTMLVideoElement>(null);
+
+  // First unmute restarts the film so the voice-over is heard from the beginning.
+  const toggleBannerSound = () => {
+    const v = bannerRef.current;
+    if (!v) return;
+    if (v.muted) {
+      v.currentTime = 0;
+      v.loop = false;
+      v.muted = false;
+      v.play().catch(() => {});
+      setBannerMuted(false);
+    } else {
+      v.muted = true;
+      v.loop = true;
+      setBannerMuted(true);
+    }
+  };
+
+  const openFilm = () => {
+    const v = bannerRef.current;
+    if (v) { v.muted = true; v.loop = true; }
+    setBannerMuted(true);
+    setFilmOpen(true);
+  };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-white">
+      {/* Banner: the institutional film, below the fixed header */}
+      <section className="relative pt-[96px] bg-[#0A1A10]">
+        <div className={`relative w-full overflow-hidden max-h-[calc(100svh-96px)] ${isMobile ? 'aspect-[9/16]' : 'aspect-video'}`}>
+          <BannerVideo videoRef={bannerRef} onEnded={() => setBannerMuted(true)} />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/75 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 z-10 pb-6 md:pb-8">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-12 flex flex-row items-center justify-end gap-3">
+              <button onClick={toggleBannerSound} className="flex-1 sm:flex-none flex items-center justify-center gap-2 sm:gap-3 bg-black/40 backdrop-blur-sm border border-white/50 text-white px-3 sm:px-6 py-3 font-sans uppercase tracking-[0.2em] text-[11px] font-bold hover:bg-white hover:text-institutional-grey transition-all">
+                {bannerMuted ? (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6" /></svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14" /></svg>
+                )}
+                {bannerMuted ? 'Activer le son' : 'Couper le son'}
+              </button>
+              <button onClick={openFilm} className="flex-1 sm:flex-none flex items-center justify-center gap-2 sm:gap-3 bg-institutional-green text-white px-3 sm:px-6 py-3 font-sans uppercase tracking-[0.2em] text-[11px] font-bold hover:bg-institutional-green/90 transition-all shadow-xl shadow-black/30">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                <span className="sm:hidden">Plein écran</span><span className="hidden sm:inline">Regarder en plein écran</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Intro */}
+      <section className="relative py-20 lg:py-28 overflow-hidden bg-white">
         <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none">
           <div className="grid grid-cols-12 h-full w-full">
             {Array.from({ length: 12 }).map((_, i) => (
-              <motion.div initial={{ height: 0 }} animate={{ height: '100%' }} transition={{ duration: 1.5, delay: i * 0.1 }} key={i} className="border-r border-institutional-grey h-full" />
+              <div key={i} className="border-r border-institutional-grey h-full" />
             ))}
           </div>
         </div>
         <div className="container mx-auto px-6 lg:px-12 relative z-10 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }} className="inline-block mb-8 py-2 px-4 border-l border-institutional-orange bg-institutional-orange/5">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="inline-block mb-8 py-2 px-4 border-l border-institutional-orange bg-institutional-orange/5">
              <span className="text-xs uppercase tracking-[0.3em] font-bold text-institutional-orange">Institution Panafricaine</span>
           </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.7 }} className="font-sans font-light text-5xl md:text-7xl lg:text-8xl text-institutional-grey mb-8 tracking-tight leading-[1.1]">
-            La puissance par <br /> <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.5 }} className="font-bold text-institutional-green italic">la retenue</motion.span>.
+          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.1 }} className="font-sans font-light text-5xl md:text-7xl lg:text-8xl text-institutional-grey mb-8 tracking-tight leading-[1.1]">
+            La puissance par <br /> <span className="font-bold text-institutional-green italic">la retenue</span>.
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.2 }} className="font-serif text-lg md:text-xl text-institutional-grey/70 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.3 }} className="font-serif text-lg md:text-xl text-institutional-grey/70 max-w-2xl mx-auto mb-12 leading-relaxed">
             MboMa & Co. est une structure de pilotage et de gouvernance de projets complexes opérant à l'interface des nations et du futur.
           </motion.p>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 1.5 }} className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.4 }} className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <button onClick={() => navigate('/institution')} className="bg-institutional-green text-white px-10 py-5 font-sans uppercase tracking-[0.2em] text-xs font-bold hover:bg-institutional-green/90 transition-all shadow-xl shadow-institutional-green/20 w-full sm:w-auto overflow-hidden relative group">
               <span className="relative z-10">Entrer dans l'Institution</span>
               <motion.div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
@@ -36,6 +90,7 @@ const HeroSection: React.FC = () => {
           </motion.div>
         </div>
       </section>
+      <ProfileVideoModal open={filmOpen} onClose={() => setFilmOpen(false)} />
 
       {/* Section: Metrics */}
       <section className="py-20 bg-institutional-grey text-white border-y border-white/5">
@@ -343,6 +398,26 @@ const HeroSection: React.FC = () => {
             transition={{ delay: 0.2 }}
           >
             <ExpertiseCards expertises={EXPERTISES} />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Section: Institutional film */}
+      <section id="film" className="py-24 lg:py-32 bg-institutional-grey text-white">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="max-w-3xl mb-12 lg:mb-16">
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-xs uppercase tracking-[0.3em] font-bold text-institutional-lightGreen mb-6">
+              Film Institutionnel
+            </motion.h2>
+            <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="font-sans text-3xl lg:text-5xl leading-tight mb-6">
+              MboMa & Co. en <span className="text-institutional-lightGreen italic">1 min 50</span>.
+            </motion.h3>
+            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="font-serif text-lg text-white/60 leading-relaxed">
+              Notre vision, nos expertises, notre méthode et notre impact : découvrez comment nous structurons l'Afrique de demain.
+            </motion.p>
+          </div>
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+            <ProfileVideoPlayer className="border border-white/10" />
           </motion.div>
         </div>
       </section>

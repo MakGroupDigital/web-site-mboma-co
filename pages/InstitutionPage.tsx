@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ProfileVideoPlayer } from '../components/ProfileVideo';
 
 const InstitutionPage: React.FC = () => (
   <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
@@ -17,6 +18,10 @@ const InstitutionPage: React.FC = () => (
              <div className="bg-white p-12 shadow-sm border-l-4 border-institutional-green mb-12">
                 <p className="font-serif text-xl leading-relaxed text-institutional-grey/80">MboMa & Co. n'est pas un cabinet de conseil traditionnel. Nous sommes un partenaire institutionnel de long terme qui assure la cohérence entre la vision politique, la structure financière et le déploiement technique.</p>
              </div>
+             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <h4 className="text-xs uppercase tracking-[0.3em] font-bold text-institutional-orange mb-6">Film Institutionnel · 1 min 50</h4>
+                <ProfileVideoPlayer />
+             </motion.div>
           </div>
         </div>
       </div>
