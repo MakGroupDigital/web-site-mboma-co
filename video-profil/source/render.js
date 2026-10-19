@@ -1,4 +1,5 @@
 // node render.js stills out_dir t1 t2 ...   |   node render.js range f0 f1 out.mp4
+// MOBILE=1 renders the vertical 1080x1920 version (film_mobile.html)
 const { chromium } = require('playwright-core');
 const { spawn } = require('child_process');
 const fs = require('fs');
@@ -8,10 +9,11 @@ const path = require('path');
   const [mode, ...args] = process.argv.slice(2);
   const tl = JSON.parse(fs.readFileSync(path.join(__dirname, 'timeline.json'), 'utf8'));
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--allow-file-access-from-files', '--disable-web-security', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  const mobile = process.env.MOBILE === '1';
+  const page = await browser.newPage({ viewport: mobile ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 } });
   page.on('console', m => console.log('[page]', m.text()));
   page.on('pageerror', e => console.log('[pageerror]', e.message));
-  await page.goto('file://' + path.join(__dirname, 'film.html'));
+  await page.goto('file://' + path.join(__dirname, mobile ? 'film_mobile.html' : 'film.html'));
   console.log(await page.evaluate(tl => window.init(tl), tl));
   const fps = tl.fps;
   if (mode === 'stills') {

@@ -2,7 +2,9 @@
 
 Vidéo motion design 1920×1080, 30 i/s, durée exacte **1 min 50 s**, en français, voix off duo Canal+ (homme / femme, ElevenLabs).
 
-Fichier : `MboMa-Co_Profil_Institutionnel_1m50.mp4`
+Fichiers :
+- `MboMa-Co_Profil_Institutionnel_1m50.mp4` : version 16:9 (1920×1080) pour site, YouTube, LinkedIn et présentations
+- `MboMa-Co_Profil_Institutionnel_1m50_Mobile_9x16.mp4` : version verticale 9:16 (1080×1920) pour TikTok, Instagram Reels, YouTube Shorts, statut WhatsApp. Même voix, même musique et même timing, mais chaque scène est remise en page pour l'écran vertical, avec les textes clés entre 250 px et 1700 px de hauteur, hors des zones masquées par les interfaces des applications.
 
 ## Déroulé
 
@@ -37,9 +39,10 @@ python3 build_timeline.py          # découpe la voix, crée timeline.json, cues
 python3 music.py cues.json music.wav
 node render.js stills chk 5 30 60  # images de contrôle (optionnel)
 node render.js range 0 3300 video.mp4
+MOBILE=1 node render.js range 0 3300 video_mobile.mp4   # version verticale (film_mobile.html)
 ffmpeg -i video.mp4 -i vo_track.wav -i music.wav -filter_complex \
   "[1:a]aformat=channel_layouts=stereo,highpass=f=80,equalizer=f=3500:t=q:w=1:g=2,acompressor=threshold=-20dB:ratio=3:attack=5:release=120,volume=1.6,asplit=2[vo][sc];[2:a]volume=0.55[mu];[mu][sc]sidechaincompress=threshold=0.03:ratio=6:attack=40:release=450[d];[d][vo]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=9[a]" \
   -map 0:v -map "[a]" -c:v copy -c:a aac -b:a 256k -movflags +faststart MboMa-Co_Profil_Institutionnel_1m50.mp4
 ```
 
-`render.js` utilise Chromium (`/opt/pw-browsers/chromium` par défaut, modifiable dans le script). Tous les textes et toutes les animations se trouvent dans `film.html` : chaque scène est une fonction synchronisée sur les mots de la voix (`WT('scene', 'mot')`).
+`render.js` utilise Chromium (`/opt/pw-browsers/chromium` par défaut, modifiable dans le script). Tous les textes et toutes les animations se trouvent dans `film.html` (16:9) et `film_mobile.html` (9:16). `film_mobile.html` est assemblé à partir du moteur de `film.html` et des scènes verticales de `mobile_scenes.js` : chaque scène est une fonction synchronisée sur les mots de la voix (`WT('scene', 'mot')`).
